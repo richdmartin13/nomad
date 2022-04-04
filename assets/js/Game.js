@@ -4,6 +4,7 @@ class World {
         this.canvas = this.element.querySelector(".game-canvas");
         this.context = this.canvas.getContext('2d');
         this.map = null;
+        this.tileMap = null;
     }
 
     startGameLoop() {
@@ -24,6 +25,7 @@ class World {
 
             //Draw Lower Layer
             this.map.drawLower(this.context, cameraMan)
+            // this.map.drawChunk(this.tileMap)
 
             //Draw Game Objects
             Object.values(this.map.gameObjects).sort((a,b) => {
@@ -57,6 +59,16 @@ class World {
     }
 
     init() {
+        // const test = new Tile({
+        //     type: 'grass'
+        // });
+        // test.init();
+
+        // this.tileMap = new TileMap({
+        //     context: this.context 
+        // })
+        // this.tileMap.init()
+
         this.startMap(window.WorldMaps.DemoRoom);
 
         this.bindHeroPositionCheck();

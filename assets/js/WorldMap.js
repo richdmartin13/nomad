@@ -28,6 +28,10 @@ class WorldMap {
         )
     }
 
+    drawChunk(map) {
+        map.renderMap();
+    }
+
     isSpaceTaken(curX, curY, dir) {
         const {x,y} = utils.nextPosition(curX, curY, dir);
         return this.walls[`${x},${y}`] || false
@@ -155,7 +159,7 @@ window.WorldMaps = {
             [utils.asGridCoord(5, 10)] : [
                 {
                     events: [
-                        { type: "changeMap", map: "Street"}
+                        { type: "changeMap", map: "Custom"}
                     ]
                 }
             ],
@@ -198,32 +202,32 @@ window.WorldMaps = {
             [utils.asGridCoord(25, 5)] : [
                 {
                     events: [
-                        { type: "changeMap", map: "North"}
+                        { type: "changeMap", map: "Custom"}
                     ]
                 }
             ]
         },
     },
-    North: {
-        lowerSrc: "/assets/images/maps/StreetNorthLower.png",
-        upperSrc: "/assets/images/maps/StreetNorthUpper.png",
+    Custom: {
+        lowerSrc: "/assets/images/maps/Custom2Lower.png",
+        upperSrc: "/assets/images/maps/Custom2Upper.png",
         gameObjects: {
             hero: new Person({
-                x: utils.withGrid(7), 
-                y: utils.withGrid(16),
+                x: utils.withGrid(21), 
+                y: utils.withGrid(25),
                 useShadow: true, 
                 isPlayer: true, 
                 animationFrameLimit: 8
             })
         },
         walls: {
-            [utils.asGridCoord(7,6)] : true,
+            [utils.asGridCoord(18,24)] : true,
         },
         cutsceneSpaces: {
-            [utils.asGridCoord(7, 16)] : [
+            [utils.asGridCoord(21, 24)] : [
                 {
                     events: [
-                        { type: "changeMap", map: "Street"}
+                        { type: "changeMap", map: "DemoRoom"}
                     ]
                 }
             ],
