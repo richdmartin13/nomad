@@ -1,5 +1,6 @@
 class GameObject {
     constructor(config) {
+        //id, x, y, src
         this.id = null;
         this.isMounted = false;
         this.posX = config.x || 0;
@@ -13,6 +14,8 @@ class GameObject {
 
         this.behaviorLoop = config.behaviorLoop || [];
         this.behaviorLoopIndex = 0;
+
+        this.talking = config.talking || {};
     }
 
     update() {}

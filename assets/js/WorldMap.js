@@ -81,6 +81,17 @@ class WorldMap {
         }
     }
 
+    checkForActionCutscene() {
+        const hero = this.gameObjects["hero"];
+        const nextCoords = utils.nextPosition(hero.posX, hero.posY, hero.direction)
+        const match = Object.values(this.gameObjects).find(object => {
+            return `${object.posX},${object.posY}` === `${nextCoords.x},${nextCoords.y}`
+        });
+        if (!this.isCutscenePlaying && match && match.talking.length) {
+            this.startCutscene(match.talking[0].events)
+        }
+    }
+
     //Wall Code
     addWall(x, y) {
         this.walls[`${x},${y}`] = true;
@@ -103,8 +114,8 @@ window.WorldMaps = {
         upperSrc: "/assets/images/maps/DemoUpper.png",
         gameObjects: {
             hero: new Person({
-                x: utils.withGrid(7), 
-                y: utils.withGrid(3),
+                x: utils.withGrid(5), 
+                y: utils.withGrid(10),
                 useShadow: true, 
                 isPlayer: true, 
                 animationFrameLimit: 8
@@ -119,13 +130,28 @@ window.WorldMaps = {
                     { type: "idle", direction: "up", time: 800},
                     { type: "idle", direction: "right", time: 800},
                     { type: "idle", direction: "down", time: 800},
+                ],
+                talking: [
+                    {
+                        events: [
+                            { who: "bob", type: "message", text: "Why hello! You got some cheese?"},
+                            { who: "bob", type: "message", text: "No? Well then I'm not sure why you're wasting my time."}
+                        ]
+                    }
                 ]
             }),
             thug: new Person({
                 x: utils.withGrid(8),
                 y: utils.withGrid(5),
                 useShadow: true, 
-                src: "/assets/images/characters/people/hero.png",
+                src: "/assets/images/characters/people/white.png",
+                talking: [
+                    {
+                        events: [
+                            { who: "thug", type: "message", text: "Don't distract me!"},
+                        ]
+                    }
+                ]
             }),
         },
         walls: {
@@ -166,8 +192,11 @@ window.WorldMaps = {
             [utils.asGridCoord(7,4)]: [
                 {
                     events: [
+                        { who: "thug", type: "idle", direction: 'left'},
                         { who: "thug", type: "walk", direction: "left"},
-                        { who: "thug", type: "idle", direction: "up", time: 500 },
+                        { who: "thug", type: "idle", direction: "up", time: 10 },
+                        { who: "thug", type: 'message', text: "You can't be in there!"},
+                        { who: "thug", type: "idle", direction: "up", time: 10 },
                         { who: "thug", type: "walk", direction: "right"},
                         { who: "hero", type: "walk", direction: "down"},
                         { who: "thug", type: "idle", direction: "down", time: 10 }
@@ -176,36 +205,156 @@ window.WorldMaps = {
             ],
         }
     },
-    Street: {
-        lowerSrc: "/assets/images/maps/StreetLower.png",
-        upperSrc: "/assets/images/maps/StreetUpper.png",
+    Office: {
+        lowerSrc: "/assets/images/maps/map.png",
+        upperSrc: "/assets/images/maps/mapUpper.png",
         gameObjects: {
             hero: new Person({
-                x: utils.withGrid(5), 
-                y: utils.withGrid(10),
+                x: utils.withGrid(11), 
+                y: utils.withGrid(4),
                 useShadow: true, 
                 isPlayer: true, 
-                animationFrameLimit: 8
+                animationFrameLimit: 8,
+                src: "/assets/images/characters/people/blue.png"
+            }),
+            bob: new Person({
+                x: utils.withGrid(3),
+                y: utils.withGrid(8),
+                useShadow: true, 
+                src: "/assets/images/characters/people/hero.png",
+                behaviorLoop: [
+                    { type: "idle", direction: "left", time: 800},
+                    { type: "idle", direction: "up", time: 800},
+                    { type: "idle", direction: "right", time: 800},
+                    { type: "idle", direction: "down", time: 800},
+                ],
+                talking: [
+                    {
+                        events: [
+                            { who: "bob", type: "message", text: "Why hello! You got some cheese?"},
+                            { who: "bob", type: "message", text: "No? Well then I'm not sure why you're wasting my time."}
+                        ]
+                    }
+                ]
+            }),
+            allie: new Person({
+                x: utils.withGrid(13),
+                y: utils.withGrid(6),
+                useShadow: true, 
+                src: "/assets/images/characters/people/purple.png",
+                talking: [
+                    {
+                        events: [
+                            { who: "allie", type: "idle", direction: "left", time: 10},
+                            { who: "allie", type: "message", text: "Don't go near that guy. He's crazy."},
+                            { who: "allie", type: "idle", direction: "left", time: 100},
+                            { who: "allie", type: "idle", direction: "down", time: 10},
+                        ]
+                    }
+                ]
+            }),
+            clerk: new Person({
+                x: utils.withGrid(3),
+                y: utils.withGrid(6),
+                useShadow: true, 
+                src: "/assets/images/characters/people/white.png",
+            }),
+            clerk2: new Person({
+                x: utils.withGrid(5),
+                y: utils.withGrid(6),
+                useShadow: true, 
+                src: "/assets/images/characters/people/white.png",
             }),
         },
         walls: {
+            [utils.asGridCoord(0,5)] : true,
+            [utils.asGridCoord(1,5)] : true,
+            [utils.asGridCoord(2,5)] : true,
+            [utils.asGridCoord(3,5)] : true,
+            [utils.asGridCoord(4,5)] : true,
+            [utils.asGridCoord(5,5)] : true,
+            [utils.asGridCoord(6,5)] : true,
+            [utils.asGridCoord(7,5)] : true,
+            [utils.asGridCoord(8,5)] : true,
+            [utils.asGridCoord(9,5)] : true,
+            [utils.asGridCoord(10,4)] : true,
+            [utils.asGridCoord(11,3)] : true,
+            [utils.asGridCoord(12,4)] : true,
+            [utils.asGridCoord(13,5)] : true,
+            [utils.asGridCoord(14,5)] : true,
+            [utils.asGridCoord(15,5)] : true,
+            [utils.asGridCoord(15,6)] : true,
+            [utils.asGridCoord(15,15)] : true,
+            [utils.asGridCoord(16,7)] : true,
+            [utils.asGridCoord(16,8)] : true,
+            [utils.asGridCoord(16,9)] : true,
+            [utils.asGridCoord(16,10)] : true,
+            [utils.asGridCoord(16,11)] : true,
+            [utils.asGridCoord(16,12)] : true,
+            [utils.asGridCoord(16,13)] : true,
+            [utils.asGridCoord(16,14)] : true,
+            [utils.asGridCoord(16,15)] : true,
             [utils.asGridCoord(7,6)] : true,
+            [utils.asGridCoord(7,7)] : true,
+            [utils.asGridCoord(6,7)] : true,
+            [utils.asGridCoord(5,7)] : true,
+            [utils.asGridCoord(4,7)] : true,
+            [utils.asGridCoord(3,7)] : true,
+            [utils.asGridCoord(2,7)] : true,
+            [utils.asGridCoord(1,7)] : true,
+            [utils.asGridCoord(1,6)] : true,
+            [utils.asGridCoord(1,11)] : true,
+            [utils.asGridCoord(2,11)] : true,
+            [utils.asGridCoord(3,11)] : true,
+            [utils.asGridCoord(1,12)] : true,
+            [utils.asGridCoord(2,12)] : true,
+            [utils.asGridCoord(1,13)] : true,
+            [utils.asGridCoord(2,13)] : true,
+            [utils.asGridCoord(3,13)] : true,
+            [utils.asGridCoord(5,11)] : true,
+            [utils.asGridCoord(6,11)] : true,
+            [utils.asGridCoord(7,11)] : true,
+            [utils.asGridCoord(6,12)] : true,
+            [utils.asGridCoord(7,12)] : true,
+            [utils.asGridCoord(5,13)] : true,
+            [utils.asGridCoord(6,13)] : true,
+            [utils.asGridCoord(7,13)] : true,
+            [utils.asGridCoord(-1,6)] : true,
+            [utils.asGridCoord(-1,7)] : true,
+            [utils.asGridCoord(-1,8)] : true,
+            [utils.asGridCoord(-1,9)] : true,
+            [utils.asGridCoord(-1,10)] : true,
+            [utils.asGridCoord(-1,11)] : true,
+            [utils.asGridCoord(-1,12)] : true,
+            [utils.asGridCoord(-1,13)] : true,
+            [utils.asGridCoord(-1,14)] : true,
+            [utils.asGridCoord(-1,15)] : true,
+            [utils.asGridCoord(0,16)] : true,
+            [utils.asGridCoord(1,16)] : true,
+            [utils.asGridCoord(2,16)] : true,
+            [utils.asGridCoord(3,16)] : true,
+            [utils.asGridCoord(4,16)] : true,
+            [utils.asGridCoord(5,16)] : true,
+            [utils.asGridCoord(6,16)] : true,
+            [utils.asGridCoord(7,16)] : true,
+            [utils.asGridCoord(8,16)] : true,
+            [utils.asGridCoord(9,16)] : true,
+            [utils.asGridCoord(10,16)] : true,
+            [utils.asGridCoord(11,16)] : true,
+            [utils.asGridCoord(12,16)] : true,
+            [utils.asGridCoord(13,16)] : true,
+            [utils.asGridCoord(14,16)] : true,
+            [utils.asGridCoord(15,16)] : true,
+
         },
         cutsceneSpaces: {
-            [utils.asGridCoord(5, 9)] : [
-                {
-                    events: [
-                        { type: "changeMap", map: "DemoRoom"}
-                    ]
-                }
-            ],
-            [utils.asGridCoord(25, 5)] : [
+            [utils.asGridCoord(11, 4)] : [
                 {
                     events: [
                         { type: "changeMap", map: "Custom"}
                     ]
                 }
-            ]
+            ],
         },
     },
     Custom: {
@@ -227,7 +376,7 @@ window.WorldMaps = {
             [utils.asGridCoord(21, 24)] : [
                 {
                     events: [
-                        { type: "changeMap", map: "DemoRoom"}
+                        { type: "changeMap", map: "Office"}
                     ]
                 }
             ],

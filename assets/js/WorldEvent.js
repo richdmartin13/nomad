@@ -44,6 +44,15 @@ class WorldEvent {
         document.addEventListener("PersonFinishedWalking", completeHandler)
     }
 
+    message(resolve) {
+        const message = new Message({
+            who: this.event.who,
+            text: this.event.text,
+            onComplete: () => resolve()
+        })
+        message.init(document.querySelector(".game-container"))
+    }
+
     changeMap(resolve) {
         const sceneTransition = new SceneTransition();
         sceneTransition.init(document.querySelector(".game-container"), () => {

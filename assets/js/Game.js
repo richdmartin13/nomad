@@ -52,6 +52,17 @@ class World {
         })
     }
 
+    bindActionInput() {
+        new KeyPressListener('Enter', () => {
+            //is there someone to talk to?
+            this.map.checkForActionCutscene();
+        })
+        new KeyPressListener('KeyE', () => {
+            //is there someone to talk to?
+            this.map.checkForActionCutscene();
+        })
+    }
+
     startMap(mapConfig) {
         this.map = new WorldMap(mapConfig);
         this.map.world = this;
@@ -69,19 +80,20 @@ class World {
         // })
         // this.tileMap.init()
 
-        this.startMap(window.WorldMaps.DemoRoom);
+        this.startMap(window.WorldMaps.Office);
 
         this.bindHeroPositionCheck();
+        this.bindActionInput();
 
         this.directionInput = new DirecitonInput();
         this.directionInput.init();
 
         this.startGameLoop();
 
-        this.map.startCutscene([
-            { who: "hero", type: "walk", direction: "down"},
-            { who: "hero", type: "walk", direction: "down"},
-            { who: "hero", type: "idle", direction: "down", time: 400},
-        ])
+        // this.map.startCutscene([
+        //     { who: "hero", type: "walk", direction: "down"},
+        //     { who: "hero", type: "walk", direction: "down"},
+        //     { who: "hero", type: "idle", direction: "down", time: 400},
+        // ])
     }
 }
