@@ -14,10 +14,13 @@ body {
     margin: 0;
     overflow: hidden;
     display: flex;
+    flex-flow: column nowrap;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     font-family: 'Press Start 2P', cursive;
+    user-select: none;
+    max-height: 100vh;
 }
 
 * {
@@ -37,4 +40,86 @@ body {
 .game-container canvas {
     max-width: 100vw;
     image-rendering: pixelated;
+}
+
+.buttons {
+    transform: scale(2);
+    width: 200px;
+    display: flex;
+    flex-flow: row-reverse nowrap;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 200px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    padding: 2px;
+    transform: scale(2);
+    image-rendering: pixelated;
+    /* border: 1px solid #fff */
+}
+
+.ctrl-img {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+img {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+.updown {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.mvmt_buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    max-width: 50px;
+}
+
+.ab_btns {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 720px) {
+    body {
+        padding-top: 200px;
+        justify-content: space-evenly;
+    }
+
+    .game-container {
+        transform: scale(1.2);
+        margin: 0 auto;
+    }
+
+    .buttons {
+        margin-top: 100px;
+        margin-bottom: 200px;
+    }
 }
