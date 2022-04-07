@@ -10,9 +10,14 @@ class Message {
         this.element = document.createElement("div");
         this.element.classList.add("Message");
         this.element.innerHTML = (`
-        <p class="Message_p">${this.who}: ${this.text}</p>
+        <p class="Message_p">${this.who}: </p>
         <button class="Message_button">Next</button>
         `)
+
+        this.revealingText = new RevealingText({
+            element: this.element.querySelector(".Message_p"),
+            text: this.text,
+        })
         
         this.element.querySelector(".Message_button").addEventListener("click", () => {
             this.done();
@@ -28,12 +33,18 @@ class Message {
     }
 
     done() {
-        this.element.remove();
-        this.onComplete();
+        if(this.revealingText.isDone) {
+            this.element.remove();
+            this.actionListener.unbind();
+            this.onComplete();
+        } else {
+            this.revealingText.warpToDone();
+        }
     }
 
     init(container) {
         this.createElement();
         container.appendChild(this.element);
+        this.revealingText.init();
     }
 }

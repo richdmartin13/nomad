@@ -177,6 +177,9 @@ class World {
         // })
         // this.tileMap.init()
 
+        // var heightRatio = 1.5;
+        // this.canvas.height = this.canvas.width * heightRatio;
+        
         this.startMap(window.WorldMaps.Office);
 
         this.bindHeroPositionCheck();

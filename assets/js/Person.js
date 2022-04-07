@@ -35,7 +35,7 @@ class Person extends GameObject {
         this.direction = behavior.direction;
         if(behavior.type == "walk") {
 
-            console.log(this.posX/16, this.posY/16)
+            // console.log(this.posX/16, this.posY/16)
             //stop if space not free
             if(state.map.isSpaceTaken(this.posX, this.posY, this.direction)) {
                 behavior.retry && setTimeout(() => {

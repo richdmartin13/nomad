@@ -17,14 +17,14 @@ class WorldMap {
     drawLower(context, cameraMan) {
         context.drawImage(this.lower,
              utils.withGrid(10.5) - cameraMan.posX, 
-             utils.withGrid(6) - cameraMan.posY
+             utils.withGrid(8) - cameraMan.posY
              );
     }
 
     drawUpper(context, cameraMan) {
         context.drawImage(this.upper,              
             utils.withGrid(10.5) - cameraMan.posX, 
-            utils.withGrid(6) - cameraMan.posY
+            utils.withGrid(8) - cameraMan.posY
         )
     }
 
