@@ -10,6 +10,10 @@ class GameObject {
         //x and y coord and throw it in there, but now that I'm thinking, it could definitely
         //be avoided if, in its constructor, it called a function to check map locations and set the
         //x and y coordinates from there.
+        //
+        //While we're at it here, go ahead and make classes for things like trees, rocks, etc. 
+        //You can implement random textures and add functionality more easily than if you slumped it 
+        //together here in the spirit of making it work.
         this.direction = config.direction || "down";
         this.sprite = new Sprite({
             useShadow: config.useShadow,
