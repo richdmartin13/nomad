@@ -12,6 +12,18 @@ class WorldMap {
         this.upper.src = config.upperSrc;
 
         this.isCutscenePlaying = false;
+
+        this.map = null;
+        this.tileset = null;
+        this.tilesetURL = '../assets/images/terrain.png';
+        this.tilesetLoaded = false;
+
+        this.colors = {
+            sand: '#C2B280',
+            grass: '#4f8d2f',
+            dirt: '#9B7653',
+            water: '#2389DA'
+        }
     }
 
     drawLower(context, cameraMan) {
@@ -28,9 +40,92 @@ class WorldMap {
         )
     }
 
-    drawChunk(map) {
-        map.renderMap();
+    //
+    //
+    // Test Map Build Code
+    //
+    buildMap(mapSize, smoothing) {
+        this.map = [...Array(mapSize.x)].map(e => Array(mapSize.y));
+        noise.seed(Math.random());
+    
+        for (var x = 0; x < mapSize.x; x++) {
+            for (var y = 0; y < mapSize.y; y++) {
+                var value = noise.simplex2(x / smoothing, y / smoothing);
+    
+                this.map[x][y] = Math.abs(value) * 1;
+            }
+        }
     }
+
+    drawMap(map, ctx, mapSize, tileSize, cameraMan) {
+        if (ctx === null) { return; }
+
+        this.tileset = new Image();
+
+        var sprites = {
+            0 : {sprite: {x: 0, y: 0, w: 16, h: 16}},
+            1 : {sprite: {x: 16, y: 0, w: 16, h: 16}},
+            2 : {sprite: {x: 32, y: 0, w: 16, h: 16}},
+            3 : {sprite: {x: 48, y: 0, w: 16, h: 16}}
+        }
+        var sprite = null;
+
+        this.tileset.onload = () => {
+            this.tilesetLoaded = true;
+        }
+        this.tileset.src = this.tilesetURL;
+    
+        for (var y = 0; y < mapSize.y; y++) {
+            for (var x = 0; x < mapSize.x; x++) {
+                var value = this.map[x][y];
+    
+                switch (true) {
+                    case value > 0.3 && value < 0.4:
+                        // sprite = sprites[1].sprite;
+                        ctx.fillStyle = this.colors.sand;
+                        break;
+                    case value > 0.4 && value < 0.9:
+                        // sprite = sprites[2].sprite;
+                        ctx.fillStyle = this.colors.grass;
+                        break;
+                    case value > 0.9:
+                        // sprite = sprites[3].sprite;
+                        ctx.fillStyle = this.colors.dirt;
+                        break;
+                    case value < 0.3:
+                    default:
+                        // sprite = sprites[0].sprite;
+                        ctx.fillStyle = this.colors.water;
+                        this.addWall(utils.withGrid(x), utils.withGrid(y))
+                        break;
+                }
+    
+                // ctx.drawImage(
+                //     this.tileset,
+                //         sprite.x, sprite.y, 
+                //         sprite.w, sprite.h,
+                //         x*sprite.w, y*sprite.h,
+                //         tileSize.x, tileSize.h
+                // )
+                // console.log(`image ${this.tileset.src} drawn at ${(sprite.x*x)/16}, ${(sprite.y*y)/16}`)
+
+                ctx.fillRect( 
+                    utils.withGrid(10.5) + utils.withGrid(x) - cameraMan.posX, 
+                    utils.withGrid(8) + utils.withGrid(y) - cameraMan.posY, 
+                    tileSize.x, 
+                    tileSize.y );
+            }
+        }
+        // console.log(this.walls)
+    }
+
+    getMap() {
+        return this.map;
+    }
+    //
+    // End Test Map Code
+    //
+    //
 
     isSpaceTaken(curX, curY, dir) {
         const {x,y} = utils.nextPosition(curX, curY, dir);
@@ -206,8 +301,10 @@ window.WorldMaps = {
         }
     },
     Office: {
-        lowerSrc: "/assets/images/maps/map.png",
-        upperSrc: "/assets/images/maps/mapUpper.png",
+        // lowerSrc: "/assets/images/maps/map.png",
+        // upperSrc: "/assets/images/maps/mapUpper.png",
+        lowerSrc: "",
+        upperSrc: "",
         gameObjects: {
             hero: new Person({
                 x: utils.withGrid(11), 
@@ -371,6 +468,29 @@ window.WorldMaps = {
         },
         walls: {
             [utils.asGridCoord(18,24)] : true,
+        },
+        cutsceneSpaces: {
+            [utils.asGridCoord(21, 24)] : [
+                {
+                    events: [
+                        { type: "changeMap", map: "Office"}
+                    ]
+                }
+            ],
+        },
+    },
+    Procedural: {
+        lowerSrc: "",
+        upperSrc: "",
+        gameObjects: {
+            hero: new Person({
+                x: utils.withGrid(64), 
+                y: utils.withGrid(64),
+                useShadow: true, 
+                isPlayer: true, 
+                animationFrameLimit: 8,
+                src: "/assets/images/characters/people/blue.png"
+            })
         },
         cutsceneSpaces: {
             [utils.asGridCoord(21, 24)] : [

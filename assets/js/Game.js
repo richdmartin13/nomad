@@ -5,6 +5,9 @@ class World {
         this.context = this.canvas.getContext('2d');
         this.map = null;
         this.tileMap = null;
+        this.mapSize = { x: 128, y: 128 }
+        this.tileSize = { x: 16, y: 16 }
+        this.smoothing = 60;
     }
 
     startGameLoop() {
@@ -25,7 +28,8 @@ class World {
 
             //Draw Lower Layer
             this.map.drawLower(this.context, cameraMan)
-            // this.map.drawChunk(this.tileMap)
+
+            this.map.drawMap(this.terrain, this.context, this.mapSize, this.tileSize, cameraMan);
 
             //Draw Game Objects
             Object.values(this.map.gameObjects).sort((a, b) => {
@@ -158,12 +162,14 @@ class World {
             })
 
         }
-    }
+    }a
 
     startMap(mapConfig) {
         this.map = new WorldMap(mapConfig);
+        this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
         this.map.world = this;
         this.map.mountObjects();
+        console.log(this.map.walls)
     }
 
     init() {
@@ -180,7 +186,7 @@ class World {
         // var heightRatio = 1.5;
         // this.canvas.height = this.canvas.width * heightRatio;
         
-        this.startMap(window.WorldMaps.Office);
+        this.startMap(window.WorldMaps.Procedural);
 
         this.bindHeroPositionCheck();
         this.bindActionInput();
