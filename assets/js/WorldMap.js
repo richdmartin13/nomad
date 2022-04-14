@@ -204,101 +204,58 @@ class WorldMap {
 }
 
 window.WorldMaps = {
-    DemoRoom: {
-        lowerSrc: "/assets/images/maps/DemoLower.png",
-        upperSrc: "/assets/images/maps/DemoUpper.png",
+    Procedural: {
+        lowerSrc: "",
+        upperSrc: "",
         gameObjects: {
             hero: new Person({
-                x: utils.withGrid(5), 
-                y: utils.withGrid(10),
+                x: utils.withGrid(12), 
+                y: utils.withGrid(12),
                 useShadow: true, 
                 isPlayer: true, 
-                animationFrameLimit: 8
+                animationFrameLimit: 8,
+                src: "/assets/images/characters/people/blue.png"
             }),
-            bob: new Person({
-                x: utils.withGrid(5),
-                y: utils.withGrid(4),
+            nomad: new Person({
+                x: utils.withGrid(3),
+                y: utils.withGrid(13),
                 useShadow: true, 
-                src: "/assets/images/characters/people/hero.png",
-                behaviorLoop: [
-                    { type: "idle", direction: "left", time: 800},
-                    { type: "idle", direction: "up", time: 800},
-                    { type: "idle", direction: "right", time: 800},
-                    { type: "idle", direction: "down", time: 800},
-                ],
+                src: "/assets/images/characters/people/rich.png",
                 talking: [
                     {
                         events: [
-                            { who: "bob", type: "message", text: "Why hello! You got some cheese?"},
-                            { who: "bob", type: "message", text: "No? Well then I'm not sure why you're wasting my time."}
+                            { who: "nomad", type: "idle", direction: 'right', time: 10 },
+                            { who: "Rich", type: "message", text: "Hey there!"},
+                            { who: "Rich", type: "message", text: "I see you've stumbled upon this place."},
+                            { who: "rich", type: "message", text: "I'm not sure where we are, or how we get out."},
+                            { who: "rich", type: "message", text: "I figure you could take a look around for now?"},
+                            { who: "nomad", type: "idle", direction: 'down', time: 10 },
                         ]
                     }
                 ]
             }),
-            thug: new Person({
-                x: utils.withGrid(8),
-                y: utils.withGrid(5),
+            nomad2: new Person({
+                x: utils.withGrid(13),
+                y: utils.withGrid(12),
                 useShadow: true, 
-                src: "/assets/images/characters/people/white.png",
+                src: "/assets/images/characters/people/rich.png",
                 talking: [
                     {
                         events: [
-                            { who: "thug", type: "message", text: "Don't distract me!"},
+                            { who: "nomad2", type: "idle", direction: 'left', time: 10 },
+                            { who: "Rich", type: "message", text: "If you find yourself in water, just refresh the page!"},
+                            { who: "Rich", type: "message", text: "These new maps are a little wonky for now, but they'll get better."},
+                            { who: "nomad2", type: "idle", direction: 'down', time: 10 },
                         ]
                     }
                 ]
             }),
+            rock: new GameObject({
+                x: utils.withGrid(utils.getRandomInt(16)),
+                y: utils.withGrid(utils.getRandomInt(16)),
+                src: "/assets/images/world/rocks.png"
+            })
         },
-        walls: {
-            [utils.asGridCoord(7,6)] : true,
-            [utils.asGridCoord(8,6)] : true,
-            [utils.asGridCoord(7,7)] : true,
-            [utils.asGridCoord(8,7)] : true,
-            [utils.asGridCoord(1,3)] : true,
-            [utils.asGridCoord(2,3)] : true,
-            [utils.asGridCoord(3,3)] : true,
-            [utils.asGridCoord(4,3)] : true,
-            [utils.asGridCoord(5,3)] : true,
-            [utils.asGridCoord(6,3)] : true,
-            [utils.asGridCoord(6,4)] : true,
-            [utils.asGridCoord(8,4)] : true,
-            [utils.asGridCoord(8,3)] : true,
-            [utils.asGridCoord(9,3)] : true,
-            [utils.asGridCoord(10,3)] : true,
-            [utils.asGridCoord(1,10)] : true,
-            [utils.asGridCoord(2,10)] : true,
-            [utils.asGridCoord(3,10)] : true,
-            [utils.asGridCoord(4,10)] : true,
-            [utils.asGridCoord(5,11)] : true,
-            [utils.asGridCoord(6,10)] : true,
-            [utils.asGridCoord(7,10)] : true,
-            [utils.asGridCoord(8,10)] : true,
-            [utils.asGridCoord(9,10)] : true,
-            [utils.asGridCoord(10,10)] : true,
-        },
-        cutsceneSpaces: {
-            [utils.asGridCoord(5, 10)] : [
-                {
-                    events: [
-                        { type: "changeMap", map: "Custom"}
-                    ]
-                }
-            ],
-            [utils.asGridCoord(7,4)]: [
-                {
-                    events: [
-                        { who: "thug", type: "idle", direction: 'left'},
-                        { who: "thug", type: "walk", direction: "left"},
-                        { who: "thug", type: "idle", direction: "up", time: 10 },
-                        { who: "thug", type: 'message', text: "You can't be in there!"},
-                        { who: "thug", type: "idle", direction: "up", time: 10 },
-                        { who: "thug", type: "walk", direction: "right"},
-                        { who: "hero", type: "walk", direction: "down"},
-                        { who: "thug", type: "idle", direction: "down", time: 10 }
-                    ]
-                }
-            ],
-        }
     },
     Office: {
         // lowerSrc: "/assets/images/maps/map.png",
@@ -454,53 +411,5 @@ window.WorldMaps = {
             ],
         },
     },
-    Custom: {
-        lowerSrc: "/assets/images/maps/Custom2Lower.png",
-        upperSrc: "/assets/images/maps/Custom2Upper.png",
-        gameObjects: {
-            hero: new Person({
-                x: utils.withGrid(21), 
-                y: utils.withGrid(25),
-                useShadow: true, 
-                isPlayer: true, 
-                animationFrameLimit: 8
-            })
-        },
-        walls: {
-            [utils.asGridCoord(18,24)] : true,
-        },
-        cutsceneSpaces: {
-            [utils.asGridCoord(21, 24)] : [
-                {
-                    events: [
-                        { type: "changeMap", map: "Office"}
-                    ]
-                }
-            ],
-        },
-    },
-    Procedural: {
-        lowerSrc: "",
-        upperSrc: "",
-        gameObjects: {
-            hero: new Person({
-                x: utils.withGrid(64), 
-                y: utils.withGrid(64),
-                useShadow: true, 
-                isPlayer: true, 
-                animationFrameLimit: 8,
-                src: "/assets/images/characters/people/blue.png"
-            })
-        },
-        cutsceneSpaces: {
-            [utils.asGridCoord(21, 24)] : [
-                {
-                    events: [
-                        { type: "changeMap", map: "Office"}
-                    ]
-                }
-            ],
-        },
-    }
 
 }

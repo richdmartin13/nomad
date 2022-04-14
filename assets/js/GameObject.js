@@ -1,10 +1,15 @@
 class GameObject {
     constructor(config) {
-        //id, x, y, src
+        //x, y, src
         this.id = null;
         this.isMounted = false;
         this.posX = config.x || 0;
         this.posY = config.y || 0;
+        //complete refactor but this.position.x is a lot nicer than what we have here.
+        //I could more easily make a random spawn on land function if it could check a random
+        //x and y coord and throw it in there, but now that I'm thinking, it could definitely
+        //be avoided if, in its constructor, it called a function to check map locations and set the
+        //x and y coordinates from there.
         this.direction = config.direction || "down";
         this.sprite = new Sprite({
             useShadow: config.useShadow,
@@ -23,6 +28,7 @@ class GameObject {
     mount(map) {
         this.isMounted = true;
         map.addWall(this.posX, this.posY)
+        console.log(this.posX, this.posY)
 
         setTimeout(() => {
             this.doBehaviorEvent(map);
