@@ -13,6 +13,7 @@ class World {
     startGameLoop() {
         const step = () => {
 
+            // this.canvas.height = this.canvas.width * 0.565;
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
             //Establish Camera
@@ -30,7 +31,9 @@ class World {
             this.map.drawLower(this.context, cameraMan)
 
             //Draw Perlin Map
-            this.map.drawMap(this.terrain, this.context, this.mapSize, this.tileSize, cameraMan);
+            if(!this.map.custom) {
+                this.map.drawMap(this.terrain, this.context, this.mapSize, this.tileSize, cameraMan);
+            }
 
             //Draw Game Objects
             Object.values(this.map.gameObjects).sort((a, b) => {
@@ -73,6 +76,7 @@ class World {
     startMap(mapConfig) {
         this.map = new WorldMap(mapConfig);
         this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
+        if(this.map.custom){this.map.drawWorldBorder(this.mapSize);}
         this.map.world = this;
         this.map.mountObjects();
     }
@@ -91,7 +95,7 @@ class World {
         // var heightRatio = 1.5;
         // this.canvas.height = this.canvas.width * heightRatio;
         
-        this.startMap(window.WorldMaps.Procedural);
+        this.startMap(window.WorldMaps.Office);
 
         this.bindHeroPositionCheck();
         this.bindActionInput();

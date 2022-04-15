@@ -1,9 +1,13 @@
 class Sprite {
     constructor(config) {
 
+        this.offset = config.offset || {x: 0, y: 0};
+
+        this.src = config.src;
+
         //set up the image
         this.image = new Image();
-        this.image.src = config.src;
+        this.image.src = this.src;
         this.image.onload = () => {
             this.isLoaded = true;
         }
@@ -75,8 +79,8 @@ class Sprite {
     }
 
     draw(context, cameraMan) {
-        const x = this.gameObject.posX - 8 + utils.withGrid(10.5) - cameraMan.posX;
-        const y = this.gameObject.posY - 18 + utils.withGrid(8) - cameraMan.posY;
+        const x = this.gameObject.posX - this.offset.x + utils.withGrid(10.5) - cameraMan.posX;
+        const y = this.gameObject.posY - this.offset.y + utils.withGrid(8) - cameraMan.posY;
 
         this.isBadgeLoaded && context.drawImage( this.badge, x, y - 8)
         this.isShadowLoaded && context.drawImage( this.shadow, x, y);
@@ -91,5 +95,13 @@ class Sprite {
             32, 32
         );
         this.updateAnimationProgress();
+    }
+
+    setOffset(offset) {
+        this.offset = offset;
+    }
+
+    setSRC(src) {
+        this.src = src;
     }
 }

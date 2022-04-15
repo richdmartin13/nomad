@@ -4,9 +4,13 @@ class WorldMap {
         this.gameObjects = config.gameObjects;
         this.walls = config.walls|| {};
         this.cutsceneSpaces = config.cutsceneSpaces || {};
+        this.custom = config.custom;
 
         this.lower = new Image();
         this.lower.src = config.lowerSrc;
+        if(config.lowerSrc.length > 0) {
+            this.isCustom = true;
+        }
 
         this.upper = new Image();
         this.upper.src = config.upperSrc;
@@ -201,12 +205,24 @@ class WorldMap {
         const {x, y} = utils.nextPosition(wasX, wasY, dir);
         this.addWall(x, y);
     }
+
+    drawWorldBorder(mapSize) {
+        for(var x = 0; x <= mapSize.x; x++) {
+            this.addWall(utils.withGrid(x), utils.withGrid(-1));
+            this.addWall(utils.withGrid(x), utils.withGrid(mapSize.y))
+        }
+        for(var y = 0; y <= mapSize.y; y++) {
+            this.addWall(utils.withGrid(-1), utils.withGrid(y));
+            this.addWall(utils.withGrid(mapSize.x), utils.withGrid(y))
+        }
+    }
 }
 
 window.WorldMaps = {
     Procedural: {
         lowerSrc: "",
         upperSrc: "",
+        custom: false,
         gameObjects: {
             hero: new Person({
                 x: utils.withGrid(12), 
@@ -214,21 +230,21 @@ window.WorldMaps = {
                 useShadow: true, 
                 isPlayer: true, 
                 animationFrameLimit: 8,
-                src: "/assets/images/characters/people/blue.png"
+                src: "/assets/images/characters/people/blue.png",
             }),
             nomad: new Person({
-                x: utils.withGrid(3),
-                y: utils.withGrid(13),
+                x: utils.withGrid(utils.getRandomInt(24)),
+                y: utils.withGrid(utils.getRandomInt(24)),
                 useShadow: true, 
-                src: "/assets/images/characters/people/rich.png",
+                src: "/assets/images/characters/people/blue.png",
                 talking: [
                     {
                         events: [
                             { who: "nomad", type: "idle", direction: 'right', time: 10 },
-                            { who: "Rich", type: "message", text: "Hey there!"},
-                            { who: "Rich", type: "message", text: "I see you've stumbled upon this place."},
-                            { who: "rich", type: "message", text: "I'm not sure where we are, or how we get out."},
-                            { who: "rich", type: "message", text: "I figure you could take a look around for now?"},
+                            { who: "blue", type: "message", text: "Hey there!"},
+                            { who: "blue", type: "message", text: "I see you've stumbled upon this place."},
+                            { who: "blue", type: "message", text: "I'm not sure where we are, or how we get out."},
+                            { who: "blue", type: "message", text: "I figure you could take a look around for now?"},
                             { who: "nomad", type: "idle", direction: 'down', time: 10 },
                         ]
                     }
@@ -243,25 +259,35 @@ window.WorldMaps = {
                     {
                         events: [
                             { who: "nomad2", type: "idle", direction: 'left', time: 10 },
-                            { who: "Rich", type: "message", text: "If you find yourself in water, just refresh the page!"},
-                            { who: "Rich", type: "message", text: "These new maps are a little wonky for now, but they'll get better."},
-                            { who: "nomad2", type: "idle", direction: 'down', time: 10 },
+                            { who: "Rich", type: "message", text: "Ahh, you want to go back to the office?"},
+                            { who: "Rich", type: "message", text: "That makes sense. There's not a lot to do here."},
+                            { who: "Rich", type: "message", text: "Nonetheless, I'm glad you stopped by. I look forward to seeing you again!"},
+                            { type: 'changeMap', map: 'Office'}
                         ]
                     }
                 ]
             }),
-            rock: new GameObject({
-                x: utils.withGrid(utils.getRandomInt(16)),
-                y: utils.withGrid(utils.getRandomInt(16)),
-                src: "/assets/images/world/rocks.png"
+            rock: new TerrainObject({
+                x: utils.withGrid(utils.getRandomInt(24)),
+                y: utils.withGrid(utils.getRandomInt(24)),
+                type: 'rock'
+            }),
+            bush: new TerrainObject({
+                x: utils.withGrid(utils.getRandomInt(24)),
+                y: utils.withGrid(utils.getRandomInt(24)),
+                type: 'bush'
+            }),
+            cactus: new TerrainObject({
+                x: utils.withGrid(utils.getRandomInt(24)),
+                y: utils.withGrid(utils.getRandomInt(24)),
+                type: 'cactus'
             })
         },
     },
     Office: {
-        // lowerSrc: "/assets/images/maps/map.png",
-        // upperSrc: "/assets/images/maps/mapUpper.png",
-        lowerSrc: "",
-        upperSrc: "",
+        lowerSrc: "/assets/images/maps/map.png",
+        upperSrc: "/assets/images/maps/mapUpper.png",
+        custom: true,
         gameObjects: {
             hero: new Person({
                 x: utils.withGrid(11), 
@@ -405,7 +431,9 @@ window.WorldMaps = {
             [utils.asGridCoord(11, 4)] : [
                 {
                     events: [
-                        { type: "changeMap", map: "Custom"}
+                        { who: 'game', type: 'message', text: 'You are about to enter the procedural world.'},
+                        { who: 'game', type: 'message', text: 'Talk to Rich to get back here.'},
+                        { type: "changeMap", map: "Procedural"}
                     ]
                 }
             ],

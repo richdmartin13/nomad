@@ -5,6 +5,7 @@ class Person extends GameObject {
         this.isIdle = false;
 
         this.isPlayer = config.isPlayer || false;
+        this.offset = { x: 8, y: 18 }
 
         this.directionUpdate = {
             "up": ["posY", -1],
@@ -12,6 +13,8 @@ class Person extends GameObject {
             "left": ["posX", -1],
             "right": ["posX", 1]
         }
+
+        this.sprite.setOffset(this.offset);
     }
 
     update(state) {
