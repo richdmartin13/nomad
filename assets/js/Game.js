@@ -5,9 +5,10 @@ class World {
         this.context = this.canvas.getContext('2d');
         this.map = null;
         this.tileMap = null;
-        this.mapSize = { x: 24, y: 24 }
+        this.mapSize = { x: 128, y: 128 }
         this.tileSize = { x: 16, y: 16 }
         this.smoothing = 60;
+        this.terrain = null;
     }
 
     startGameLoop() {
@@ -18,6 +19,10 @@ class World {
 
             //Establish Camera
             const cameraMan = this.map.gameObjects.hero;
+            
+            // //Draw Terrain Objects
+            // this.map.addTerrainObjects(this.mapSize);
+            // console.log(this.map.gameObjects);
 
             //Update Game Objects
             Object.values(this.map.gameObjects).forEach(object => {
@@ -32,7 +37,7 @@ class World {
 
             //Draw Perlin Map
             if(!this.map.custom) {
-                this.map.drawMap(this.terrain, this.context, this.mapSize, this.tileSize, cameraMan);
+                this.map.drawMap(this.map, this.context, this.mapSize, this.tileSize, cameraMan);
             }
 
             //Draw Game Objects
@@ -75,8 +80,13 @@ class World {
 
     startMap(mapConfig) {
         this.map = new WorldMap(mapConfig);
-        this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
-        if(this.map.custom){this.map.drawWorldBorder(this.mapSize);}
+        if(!this.map.custom){
+            this.map.drawWorldBorder(this.mapSize);
+            this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
+
+            this.map.addTerrainObjects(this.mapSize);
+            console.log(this.map.gameObjects);
+        }
         this.map.world = this;
         this.map.mountObjects();
     }

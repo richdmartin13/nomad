@@ -2,13 +2,15 @@ class WorldMap {
     constructor(config) {
         this.world = null;
         this.gameObjects = config.gameObjects;
-        this.walls = config.walls|| {};
+        this.walls = config.walls || {};
         this.cutsceneSpaces = config.cutsceneSpaces || {};
         this.custom = config.custom;
+        this.mapSize = config.mapSize;
+        this.tileSize = config.tileSize;
 
         this.lower = new Image();
         this.lower.src = config.lowerSrc;
-        if(config.lowerSrc.length > 0) {
+        if (config.lowerSrc.length > 0) {
             this.isCustom = true;
         }
 
@@ -28,18 +30,24 @@ class WorldMap {
             dirt: '#9B7653',
             water: '#2389DA'
         }
+
+        this.spawnRates = {
+            rock: 12,
+            tree: 8,
+            cactus: 6
+        }
     }
 
     drawLower(context, cameraMan) {
         context.drawImage(this.lower,
-             utils.withGrid(10.5) - cameraMan.posX, 
-             utils.withGrid(8) - cameraMan.posY
-             );
+            utils.withGrid(10.5) - cameraMan.posX,
+            utils.withGrid(8) - cameraMan.posY
+        );
     }
 
     drawUpper(context, cameraMan) {
-        context.drawImage(this.upper,              
-            utils.withGrid(10.5) - cameraMan.posX, 
+        context.drawImage(this.upper,
+            utils.withGrid(10.5) - cameraMan.posX,
             utils.withGrid(8) - cameraMan.posY
         )
     }
@@ -51,11 +59,11 @@ class WorldMap {
     buildMap(mapSize, smoothing) {
         this.map = [...Array(mapSize.x)].map(e => Array(mapSize.y));
         noise.seed(Math.random());
-    
+
         for (var x = 0; x < mapSize.x; x++) {
             for (var y = 0; y < mapSize.y; y++) {
                 var value = noise.simplex2(x / smoothing, y / smoothing);
-    
+
                 this.map[x][y] = Math.abs(value) * 1;
             }
         }
@@ -67,10 +75,10 @@ class WorldMap {
         this.tileset = new Image();
 
         var sprites = {
-            0 : {sprite: {x: 0, y: 0, w: 16, h: 16}},
-            1 : {sprite: {x: 16, y: 0, w: 16, h: 16}},
-            2 : {sprite: {x: 32, y: 0, w: 16, h: 16}},
-            3 : {sprite: {x: 48, y: 0, w: 16, h: 16}}
+            0: { sprite: { x: 0, y: 0, w: 16, h: 16 } },
+            1: { sprite: { x: 16, y: 0, w: 16, h: 16 } },
+            2: { sprite: { x: 32, y: 0, w: 16, h: 16 } },
+            3: { sprite: { x: 48, y: 0, w: 16, h: 16 } }
         }
         var sprite = null;
 
@@ -78,11 +86,11 @@ class WorldMap {
             this.tilesetLoaded = true;
         }
         this.tileset.src = this.tilesetURL;
-    
+
         for (var y = 0; y < mapSize.y; y++) {
             for (var x = 0; x < mapSize.x; x++) {
                 var value = this.map[x][y];
-    
+
                 switch (true) {
                     case value > 0.3 && value < 0.4:
                         // sprite = sprites[1].sprite;
@@ -103,7 +111,7 @@ class WorldMap {
                         this.addWall(utils.withGrid(x), utils.withGrid(y))
                         break;
                 }
-    
+
                 // ctx.drawImage(
                 //     this.tileset,
                 //         sprite.x, sprite.y, 
@@ -113,11 +121,11 @@ class WorldMap {
                 // )
                 // console.log(`image ${this.tileset.src} drawn at ${(sprite.x*x)/16}, ${(sprite.y*y)/16}`)
 
-                ctx.fillRect( 
-                    utils.withGrid(10.5) + utils.withGrid(x) - cameraMan.posX, 
-                    utils.withGrid(8) + utils.withGrid(y) - cameraMan.posY, 
-                    tileSize.x, 
-                    tileSize.y );
+                ctx.fillRect(
+                    utils.withGrid(10.5) + utils.withGrid(x) - cameraMan.posX,
+                    utils.withGrid(8) + utils.withGrid(y) - cameraMan.posY,
+                    tileSize.x,
+                    tileSize.y);
             }
         }
         // console.log(this.walls)
@@ -126,13 +134,59 @@ class WorldMap {
     getMap() {
         return this.map;
     }
+
+    addTerrainObjects(mapSize) {
+        for (var y = 0; y < mapSize.y; y++) {
+            for (var x = 0; x < mapSize.x; x++) {
+                var value = this.map[x][y];
+                var spawn = Math.floor(Math.random() * 100);
+                var source = null;
+                var placeObject = false;
+
+                switch (true) {
+                    case value > 0.4:
+                        //rocks spawn code
+                        if (spawn > 100 - this.spawnRates.rock) {
+                            source = '/assets/images/world/rocks.png';
+                            placeObject = true;
+                        }
+                    case value > 0.4 && value < 0.8:
+                        //tree spawn code
+                        if (spawn > 100 - this.spawnRates.tree) {
+                            source = '/assets/images/world/bush.png';
+                            placeObject = true;
+                        }
+                        break;
+                    case value > 0.3 && value < 0.4:
+                        //cactus spawn code
+                        if (spawn > 100 - this.spawnRates.cactus) {
+                            source = '/assets/images/world/cactus.png';
+                            placeObject = true;
+                        }
+                        break;
+                    default:
+
+                        break;
+                }
+
+                if (placeObject) {
+                    this.gameObjects[`${x},${y}`] = new TerrainObject({
+                        x: utils.withGrid(x),
+                        y: utils.withGrid(y),
+                        src: source
+                    });
+                }
+
+            }
+        }
+    }
     //
     // End Test Map Code
     //
     //
 
     isSpaceTaken(curX, curY, dir) {
-        const {x,y} = utils.nextPosition(curX, curY, dir);
+        const { x, y } = utils.nextPosition(curX, curY, dir);
         return this.walls[`${x},${y}`] || false
     }
 
@@ -148,7 +202,7 @@ class WorldMap {
     async startCutscene(events) {
         this.isCutscenePlaying = true;
 
-        for( let i=0; i<events.length; i++) {
+        for (let i = 0; i < events.length; i++) {
             const eventHandler = new WorldEvent({
                 event: events[i],
                 map: this,
@@ -167,7 +221,7 @@ class WorldMap {
         const match = Object.values(this.gameObjects).find(object => {
             return `${object.posX},${object.posY}` === `${nextCoords.x},${nextCoords.y}`
         });
-        if(!this.isCutscenePlaying && match && match.talking.length) {
+        if (!this.isCutscenePlaying && match && match.talking.length) {
             this.startCutscene(match.talking[0].events)
         }
     }
@@ -175,8 +229,8 @@ class WorldMap {
     checkForFootstepCutscene() {
         const hero = this.gameObjects["hero"];
         const match = this.cutsceneSpaces[`${hero.posX},${hero.posY}`];
-        if(!this.isCutscenePlaying && match) {
-            this.startCutscene( match[0].events )
+        if (!this.isCutscenePlaying && match) {
+            this.startCutscene(match[0].events)
         }
     }
 
@@ -202,242 +256,18 @@ class WorldMap {
 
     moveWall(wasX, wasY, dir) {
         this.remWall(wasX, wasY);
-        const {x, y} = utils.nextPosition(wasX, wasY, dir);
+        const { x, y } = utils.nextPosition(wasX, wasY, dir);
         this.addWall(x, y);
     }
 
     drawWorldBorder(mapSize) {
-        for(var x = 0; x <= mapSize.x; x++) {
+        for (var x = 0; x <= mapSize.x; x++) {
             this.addWall(utils.withGrid(x), utils.withGrid(-1));
             this.addWall(utils.withGrid(x), utils.withGrid(mapSize.y))
         }
-        for(var y = 0; y <= mapSize.y; y++) {
+        for (var y = 0; y <= mapSize.y; y++) {
             this.addWall(utils.withGrid(-1), utils.withGrid(y));
             this.addWall(utils.withGrid(mapSize.x), utils.withGrid(y))
         }
     }
-}
-
-window.WorldMaps = {
-    Procedural: {
-        lowerSrc: "",
-        upperSrc: "",
-        custom: false,
-        gameObjects: {
-            hero: new Person({
-                x: utils.withGrid(12), 
-                y: utils.withGrid(12),
-                useShadow: true, 
-                isPlayer: true, 
-                animationFrameLimit: 8,
-                src: "/assets/images/characters/people/blue.png",
-            }),
-            nomad: new Person({
-                x: utils.withGrid(utils.getRandomInt(24)),
-                y: utils.withGrid(utils.getRandomInt(24)),
-                useShadow: true, 
-                src: "/assets/images/characters/people/blue.png",
-                talking: [
-                    {
-                        events: [
-                            { who: "nomad", type: "idle", direction: 'right', time: 10 },
-                            { who: "blue", type: "message", text: "Hey there!"},
-                            { who: "blue", type: "message", text: "I see you've stumbled upon this place."},
-                            { who: "blue", type: "message", text: "I'm not sure where we are, or how we get out."},
-                            { who: "blue", type: "message", text: "I figure you could take a look around for now?"},
-                            { who: "nomad", type: "idle", direction: 'down', time: 10 },
-                        ]
-                    }
-                ]
-            }),
-            nomad2: new Person({
-                x: utils.withGrid(13),
-                y: utils.withGrid(12),
-                useShadow: true, 
-                src: "/assets/images/characters/people/rich.png",
-                talking: [
-                    {
-                        events: [
-                            { who: "nomad2", type: "idle", direction: 'left', time: 10 },
-                            { who: "Rich", type: "message", text: "Ahh, you want to go back to the office?"},
-                            { who: "Rich", type: "message", text: "That makes sense. There's not a lot to do here."},
-                            { who: "Rich", type: "message", text: "Nonetheless, I'm glad you stopped by. I look forward to seeing you again!"},
-                            { type: 'changeMap', map: 'Office'}
-                        ]
-                    }
-                ]
-            }),
-            rock: new TerrainObject({
-                x: utils.withGrid(utils.getRandomInt(24)),
-                y: utils.withGrid(utils.getRandomInt(24)),
-                type: 'rock'
-            }),
-            bush: new TerrainObject({
-                x: utils.withGrid(utils.getRandomInt(24)),
-                y: utils.withGrid(utils.getRandomInt(24)),
-                type: 'bush'
-            }),
-            cactus: new TerrainObject({
-                x: utils.withGrid(utils.getRandomInt(24)),
-                y: utils.withGrid(utils.getRandomInt(24)),
-                type: 'cactus'
-            })
-        },
-    },
-    Office: {
-        lowerSrc: "/assets/images/maps/map.png",
-        upperSrc: "/assets/images/maps/mapUpper.png",
-        custom: true,
-        gameObjects: {
-            hero: new Person({
-                x: utils.withGrid(11), 
-                y: utils.withGrid(4),
-                useShadow: true, 
-                isPlayer: true, 
-                animationFrameLimit: 8,
-                src: "/assets/images/characters/people/blue.png"
-            }),
-            bob: new Person({
-                x: utils.withGrid(3),
-                y: utils.withGrid(8),
-                useShadow: true, 
-                src: "/assets/images/characters/people/hero.png",
-                behaviorLoop: [
-                    { type: "idle", direction: "left", time: 800},
-                    { type: "idle", direction: "up", time: 800},
-                    { type: "idle", direction: "right", time: 800},
-                    { type: "idle", direction: "down", time: 800},
-                ],
-                talking: [
-                    {
-                        events: [
-                            { who: "bob", type: "message", text: "Why hello! You got some cheese?"},
-                            { who: "bob", type: "message", text: "No? Well then I'm not sure why you're wasting my time."}
-                        ]
-                    }
-                ]
-            }),
-            allie: new Person({
-                x: utils.withGrid(13),
-                y: utils.withGrid(6),
-                useShadow: true, 
-                src: "/assets/images/characters/people/purple.png",
-                talking: [
-                    {
-                        events: [
-                            { who: "allie", type: "idle", direction: "left", time: 10},
-                            { who: "allie", type: "message", text: "Don't go near that guy. He's crazy."},
-                            { who: "allie", type: "idle", direction: "left", time: 100},
-                            { who: "allie", type: "idle", direction: "down", time: 10},
-                        ]
-                    }
-                ]
-            }),
-            clerk: new Person({
-                x: utils.withGrid(3),
-                y: utils.withGrid(6),
-                useShadow: true, 
-                src: "/assets/images/characters/people/white.png",
-            }),
-            clerk2: new Person({
-                x: utils.withGrid(5),
-                y: utils.withGrid(6),
-                useShadow: true, 
-                src: "/assets/images/characters/people/white.png",
-            }),
-        },
-        walls: {
-            [utils.asGridCoord(0,5)] : true,
-            [utils.asGridCoord(1,5)] : true,
-            [utils.asGridCoord(2,5)] : true,
-            [utils.asGridCoord(3,5)] : true,
-            [utils.asGridCoord(4,5)] : true,
-            [utils.asGridCoord(5,5)] : true,
-            [utils.asGridCoord(6,5)] : true,
-            [utils.asGridCoord(7,5)] : true,
-            [utils.asGridCoord(8,5)] : true,
-            [utils.asGridCoord(9,5)] : true,
-            [utils.asGridCoord(10,4)] : true,
-            [utils.asGridCoord(11,3)] : true,
-            [utils.asGridCoord(12,4)] : true,
-            [utils.asGridCoord(13,5)] : true,
-            [utils.asGridCoord(14,5)] : true,
-            [utils.asGridCoord(15,5)] : true,
-            [utils.asGridCoord(15,6)] : true,
-            [utils.asGridCoord(15,15)] : true,
-            [utils.asGridCoord(16,7)] : true,
-            [utils.asGridCoord(16,8)] : true,
-            [utils.asGridCoord(16,9)] : true,
-            [utils.asGridCoord(16,10)] : true,
-            [utils.asGridCoord(16,11)] : true,
-            [utils.asGridCoord(16,12)] : true,
-            [utils.asGridCoord(16,13)] : true,
-            [utils.asGridCoord(16,14)] : true,
-            [utils.asGridCoord(16,15)] : true,
-            [utils.asGridCoord(7,6)] : true,
-            [utils.asGridCoord(7,7)] : true,
-            [utils.asGridCoord(6,7)] : true,
-            [utils.asGridCoord(5,7)] : true,
-            [utils.asGridCoord(4,7)] : true,
-            [utils.asGridCoord(3,7)] : true,
-            [utils.asGridCoord(2,7)] : true,
-            [utils.asGridCoord(1,7)] : true,
-            [utils.asGridCoord(1,6)] : true,
-            [utils.asGridCoord(1,11)] : true,
-            [utils.asGridCoord(2,11)] : true,
-            [utils.asGridCoord(3,11)] : true,
-            [utils.asGridCoord(1,12)] : true,
-            [utils.asGridCoord(2,12)] : true,
-            [utils.asGridCoord(1,13)] : true,
-            [utils.asGridCoord(2,13)] : true,
-            [utils.asGridCoord(3,13)] : true,
-            [utils.asGridCoord(5,11)] : true,
-            [utils.asGridCoord(6,11)] : true,
-            [utils.asGridCoord(7,11)] : true,
-            [utils.asGridCoord(6,12)] : true,
-            [utils.asGridCoord(7,12)] : true,
-            [utils.asGridCoord(5,13)] : true,
-            [utils.asGridCoord(6,13)] : true,
-            [utils.asGridCoord(7,13)] : true,
-            [utils.asGridCoord(-1,6)] : true,
-            [utils.asGridCoord(-1,7)] : true,
-            [utils.asGridCoord(-1,8)] : true,
-            [utils.asGridCoord(-1,9)] : true,
-            [utils.asGridCoord(-1,10)] : true,
-            [utils.asGridCoord(-1,11)] : true,
-            [utils.asGridCoord(-1,12)] : true,
-            [utils.asGridCoord(-1,13)] : true,
-            [utils.asGridCoord(-1,14)] : true,
-            [utils.asGridCoord(-1,15)] : true,
-            [utils.asGridCoord(0,16)] : true,
-            [utils.asGridCoord(1,16)] : true,
-            [utils.asGridCoord(2,16)] : true,
-            [utils.asGridCoord(3,16)] : true,
-            [utils.asGridCoord(4,16)] : true,
-            [utils.asGridCoord(5,16)] : true,
-            [utils.asGridCoord(6,16)] : true,
-            [utils.asGridCoord(7,16)] : true,
-            [utils.asGridCoord(8,16)] : true,
-            [utils.asGridCoord(9,16)] : true,
-            [utils.asGridCoord(10,16)] : true,
-            [utils.asGridCoord(11,16)] : true,
-            [utils.asGridCoord(12,16)] : true,
-            [utils.asGridCoord(13,16)] : true,
-            [utils.asGridCoord(14,16)] : true,
-            [utils.asGridCoord(15,16)] : true,
-
-        },
-        cutsceneSpaces: {
-            [utils.asGridCoord(11, 4)] : [
-                {
-                    events: [
-                        { who: 'game', type: 'message', text: 'You are about to enter the procedural world.'},
-                        { who: 'game', type: 'message', text: 'Talk to Rich to get back here.'},
-                        { type: "changeMap", map: "Procedural"}
-                    ]
-                }
-            ],
-        },
-    },
-
 }
