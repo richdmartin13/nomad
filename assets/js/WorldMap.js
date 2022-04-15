@@ -2,6 +2,7 @@ class WorldMap {
     constructor(config) {
         this.world = null;
         this.gameObjects = config.gameObjects;
+        this.initialGameObjects = config.gameObjects;
         this.walls = config.walls || {};
         this.cutsceneSpaces = config.cutsceneSpaces || {};
         this.custom = config.custom;
@@ -34,7 +35,8 @@ class WorldMap {
         this.spawnRates = {
             rock: 12,
             tree: 8,
-            cactus: 6
+            cactus: 6,
+            leaves: 20
         }
     }
 
@@ -75,10 +77,13 @@ class WorldMap {
         this.tileset = new Image();
 
         var sprites = {
-            0: { sprite: { x: 0, y: 0, w: 16, h: 16 } },
-            1: { sprite: { x: 16, y: 0, w: 16, h: 16 } },
-            2: { sprite: { x: 32, y: 0, w: 16, h: 16 } },
-            3: { sprite: { x: 48, y: 0, w: 16, h: 16 } }
+            water: { sprite: { x: 0, y: 0, w: 16, h: 16 } },
+            sand: { sprite: { x: 16, y: 0, w: 16, h: 16 } },
+            grass: { sprite: { x: 32, y: 0, w: 16, h: 16 } },
+            dirt: { sprite: { x: 48, y: 0, w: 16, h: 16 } },
+            sandE: { sprite: { x: 16, y: 16, w: 16, h: 16 } },
+            grassE: { sprite: { x: 32, y: 16, w: 16, h: 16 } },
+            dirtE: { sprite: { x: 48, y: 16, w: 16, h: 16 } },
         }
         var sprite = null;
 
@@ -93,42 +98,50 @@ class WorldMap {
 
                 switch (true) {
                     case value > 0.3 && value < 0.4:
-                        // sprite = sprites[1].sprite;
+                        sprite = sprites.sand.sprite;
+                        if (this.map[x][y + 1] < 0.3) {
+                            sprite = sprites.sandE.sprite;
+                            this.addWall(utils.withGrid(x), utils.withGrid(y))
+                        }
                         ctx.fillStyle = this.colors.sand;
                         break;
                     case value > 0.4 && value < 0.9:
-                        // sprite = sprites[2].sprite;
+                        sprite = sprites.grass.sprite;
+                        // if(this.map[x][y+1] < 0.4) {
+                        //     sprite = sprites.grassE.sprite;
+                        // }
                         ctx.fillStyle = this.colors.grass;
                         break;
                     case value > 0.9:
-                        // sprite = sprites[3].sprite;
+                        sprite = sprites.dirt.sprite;
+                        // if(this.map[x][y+1] < 0.9) {
+                        //     sprite = sprites.dirtE.sprite;
+                        // }
                         ctx.fillStyle = this.colors.dirt;
                         break;
                     case value < 0.3:
                     default:
-                        // sprite = sprites[0].sprite;
+                        sprite = sprites.water.sprite;
                         ctx.fillStyle = this.colors.water;
                         this.addWall(utils.withGrid(x), utils.withGrid(y))
                         break;
                 }
 
-                // ctx.drawImage(
-                //     this.tileset,
-                //         sprite.x, sprite.y, 
-                //         sprite.w, sprite.h,
-                //         x*sprite.w, y*sprite.h,
-                //         tileSize.x, tileSize.h
-                // )
-                // console.log(`image ${this.tileset.src} drawn at ${(sprite.x*x)/16}, ${(sprite.y*y)/16}`)
+                var render = true;
 
-                ctx.fillRect(
-                    utils.withGrid(12) + utils.withGrid(x) - cameraMan.posX,
-                    utils.withGrid(16) + utils.withGrid(y) - cameraMan.posY,
-                    tileSize.x,
-                    tileSize.y);
+                if(render) {
+                    ctx.drawImage(
+                        this.tileset,
+                        sprite.x, sprite.y,
+                        sprite.w, sprite.h,
+                        utils.withGrid(12) + utils.withGrid(x) - cameraMan.posX,
+                        utils.withGrid(16) + utils.withGrid(y) - cameraMan.posY,
+                        tileSize.x, tileSize.y
+                    )
+                }
+                
             }
         }
-        // console.log(this.walls)
     }
 
     getMap() {
@@ -136,36 +149,62 @@ class WorldMap {
     }
 
     addTerrainObjects(mapSize) {
+        this.gameObjects = this.initialGameObjects;
+        // The above doesn't work, so figure that out.
+
         for (var y = 0; y < mapSize.y; y++) {
             for (var x = 0; x < mapSize.x; x++) {
                 var value = this.map[x][y];
                 var spawn = Math.floor(Math.random() * 100);
                 var source = null;
+                var leafSource = null;
                 var placeObject = false;
+                var placeLeaves = false;
+
+                if (this.map[x][y + 1] < 0.3) {
+                    // console.log(x, y)
+                    spawn = 0;
+                }
 
                 switch (true) {
                     case value > 0.4:
                         //rocks spawn code
                         if (spawn > 100 - this.spawnRates.rock) {
-                            source = '/assets/images/world/rocks.png';
+                            var tex = Math.floor(Math.random() * 6);
+                            source = `/assets/images/world/rocks${tex}.png`;
                             placeObject = true;
                         }
                     case value > 0.4 && value < 0.8:
                         //tree spawn code
                         if (spawn > 100 - this.spawnRates.tree) {
-                            source = '/assets/images/world/bush.png';
+                            var tex = Math.floor(Math.random() * 2);
+                            source = `/assets/images/world/bush${tex}.png`;
                             placeObject = true;
                         }
                         break;
                     case value > 0.3 && value < 0.4:
                         //cactus spawn code
                         if (spawn > 100 - this.spawnRates.cactus) {
-                            source = '/assets/images/world/cactus.png';
+                            var tex = Math.floor(Math.random() * 2);
+                            source = `/assets/images/world/cactus${tex}.png`;
                             placeObject = true;
                         }
                         break;
                     default:
 
+                        break;
+                }
+
+                spawn = Math.floor(Math.random() * 100);
+
+                switch (true) {
+                    case value > 0.4 && value < 0.8:
+                        //leaves spawn code
+                        if (spawn > 100 - this.spawnRates.leaves) {
+                            var tex = Math.floor(Math.random() * 6);
+                            leafSource = `/assets/images/world/leaves${tex}.png`;
+                            placeLeaves = true;
+                        }
                         break;
                 }
 
@@ -177,8 +216,35 @@ class WorldMap {
                     });
                 }
 
+                if (placeLeaves) {
+                    this.gameObjects[`${x},${y}`] = new TerrainObject({
+                        x: utils.withGrid(x),
+                        y: utils.withGrid(y),
+                        src: leafSource,
+                        collision: false
+                    });
+                }
+
             }
         }
+    }
+
+    getRandomSpawn() {
+        var x = Math.floor(Math.random() * this.mapSize.x),
+            y = Math.floor(Math.random() * this.mapSize.y) + 1;
+        var retry = true;
+
+        while (retry) {
+            if (this.isTaken(x, y) || this.map[x][y] <= 0.3) {
+                // console.log(`space taken at ${x},${y}`)
+                x = Math.floor(Math.random() * this.mapSize.x);
+                y = Math.floor(Math.random() * this.mapSize.y);
+            } else {
+                retry = false;
+            }
+        }
+
+        return { x: utils.withGrid(x), y: utils.withGrid(y) };
     }
     //
     // End Test Map Code
@@ -190,10 +256,21 @@ class WorldMap {
         return this.walls[`${x},${y}`] || false
     }
 
+    isTaken(curX, curY) {
+        const { x, y } = {curX, curY};
+        return this.walls[`${x},${y}`] || false
+    }
+
     mountObjects() {
         Object.keys(this.gameObjects).forEach(key => {
             let object = this.gameObjects[key];
             object.id = key;
+
+            if (`${object.posX},${object.posY}` == '0,0') {
+                var position = this.getRandomSpawn();
+                object.setPosition(position);
+            }
+
             object.mount(this);
         })
     }

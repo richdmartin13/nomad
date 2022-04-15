@@ -131,9 +131,15 @@ img {
     }
 
     .game-container {
-        transform: scale(1.2);
+        transform: scale(0.9);
         margin: 0 auto;
         transition: 0.5s ease;
+    }
+
+    .zoom {
+        transform: scale(1.5);
+        margin: 0 auto;
+        object-fit: cover;
     }
 
     .buttons {

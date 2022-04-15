@@ -42,6 +42,9 @@ class World {
 
             //Draw Game Objects
             Object.values(this.map.gameObjects).sort((a, b) => {
+                if(!a.collision ) {
+                    return -1
+                }
                 return a.posY - b.posY
             }).forEach(object => {
                 object.sprite.draw(this.context, cameraMan);
@@ -85,27 +88,18 @@ class World {
             this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
 
             this.map.addTerrainObjects(this.mapSize);
-            console.log(this.map.gameObjects);
+            // console.log(this.map.gameObjects);
         }
         this.map.world = this;
         this.map.mountObjects();
     }
 
     init() {
-        // const test = new Tile({
-        //     type: 'grass'
-        // });
-        // test.init();
-
-        // this.tileMap = new TileMap({
-        //     context: this.context 
-        // })
-        // this.tileMap.init()
 
         // var heightRatio = 1.5;
         // this.canvas.height = this.canvas.width * heightRatio;
         
-        this.startMap(window.WorldMaps.Office);
+        this.startMap(window.WorldMaps.Procedural);
 
         this.bindHeroPositionCheck();
         this.bindActionInput();

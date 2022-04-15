@@ -19,36 +19,28 @@ class GameObject {
 
         this.map = config.map;
         this.type = config.type || '';
+        this.collision = config.collision;
 
-        // this.getRandomSpawn()
+        if(config.collision == null) {
+            this.collision = true;
+        } else {
+            this.collision = config.collision;
+        }
+
     }
 
-    getRandomSpawn() {
-        // Maybe instead of testing elevation, determine 
-        // if there's a wall where we want to spawn?
-        //
-        // First, generate a random set of coordinates.
-        // Then, check if there's a wall at that set of coordinates.
-        // If so, generate a new set. Else, consider the area safe
-        // and place the object there.
-        //
-        // Ideally, it's gotta operate off of a flag. TerrainObjects
-        // like trees aren't randomized in the same way.
-
-        var x = Math.floor(Math.Random*this.map[0].length);
-        var y = Math.floor(Math.Random*this.map.length);
-
-        if(this.map[x,y] > 0.3) {
-            this.posX = x;
-            this.posY = y;
-        }
+    setPosition(pos) {
+        this.posX = pos.x;
+        this.posY = pos.y;
     }
 
     update() {}
 
     mount(map) {
         this.isMounted = true;
-        map.addWall(this.posX, this.posY)
+        if(this.collision) {
+            map.addWall(this.posX, this.posY)
+        }
 
         setTimeout(() => {
             this.doBehaviorEvent(map);

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx serve"
+    "start": "npx serve",
+    "deploy": "git add -A && git commit -a && git push"
   },
   "author": "Richard Martin",
   "license": "ISC",

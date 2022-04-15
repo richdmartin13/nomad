@@ -7,16 +7,12 @@ window.WorldMaps = {
         custom: false,
         gameObjects: {
             hero: new Person({
-                x: utils.withGrid(64), 
-                y: utils.withGrid(64),
                 useShadow: true, 
                 isPlayer: true, 
                 animationFrameLimit: 8,
                 src: "/assets/images/characters/people/blue.png",
             }),
             nomad: new Person({
-                x: utils.withGrid(utils.getRandomInt(128)),
-                y: utils.withGrid(utils.getRandomInt(128)),
                 useShadow: true, 
                 src: "/assets/images/characters/people/blue.png",
                 talking: [
@@ -33,8 +29,6 @@ window.WorldMaps = {
                 ]
             }),
             nomad2: new Person({
-                x: utils.withGrid(65),
-                y: utils.withGrid(64),
                 useShadow: true, 
                 src: "/assets/images/characters/people/rich.png",
                 talking: [

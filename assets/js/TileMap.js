@@ -91,7 +91,7 @@ class TileMap {
                 this.context.fillRect(x*this.tileSize.w, y*this.tileSize.h, this.tileSize.w, this.tileSize.h)
             }
         }
-        console.log("map rendered")
+        // console.log("map rendered")
     }
 
 }
