@@ -30,8 +30,8 @@ body {
 
 .game-container {
     position: relative;
-    width: 352px;
-    height: 198px;
+    width: 400px;
+    height: 400px;
     /* width: 100vw;
     height: 100vw; */
     outline: 1px solid rgba(0,0,0,0.2);

@@ -40,15 +40,15 @@ class WorldMap {
 
     drawLower(context, cameraMan) {
         context.drawImage(this.lower,
-            utils.withGrid(10.5) - cameraMan.posX,
-            utils.withGrid(8) - cameraMan.posY
+            utils.withGrid(12) - cameraMan.posX,
+            utils.withGrid(16) - cameraMan.posY
         );
     }
 
     drawUpper(context, cameraMan) {
         context.drawImage(this.upper,
-            utils.withGrid(10.5) - cameraMan.posX,
-            utils.withGrid(8) - cameraMan.posY
+            utils.withGrid(12) - cameraMan.posX,
+            utils.withGrid(16) - cameraMan.posY
         )
     }
 
@@ -122,8 +122,8 @@ class WorldMap {
                 // console.log(`image ${this.tileset.src} drawn at ${(sprite.x*x)/16}, ${(sprite.y*y)/16}`)
 
                 ctx.fillRect(
-                    utils.withGrid(10.5) + utils.withGrid(x) - cameraMan.posX,
-                    utils.withGrid(8) + utils.withGrid(y) - cameraMan.posY,
+                    utils.withGrid(12) + utils.withGrid(x) - cameraMan.posX,
+                    utils.withGrid(16) + utils.withGrid(y) - cameraMan.posY,
                     tileSize.x,
                     tileSize.y);
             }

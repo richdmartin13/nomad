@@ -79,8 +79,8 @@ class Sprite {
     }
 
     draw(context, cameraMan) {
-        const x = this.gameObject.posX - this.offset.x + utils.withGrid(10.5) - cameraMan.posX;
-        const y = this.gameObject.posY - this.offset.y + utils.withGrid(8) - cameraMan.posY;
+        const x = this.gameObject.posX - this.offset.x + utils.withGrid(12) - cameraMan.posX;
+        const y = this.gameObject.posY - this.offset.y + utils.withGrid(16) - cameraMan.posY;
 
         this.isBadgeLoaded && context.drawImage( this.badge, x, y - 8)
         this.isShadowLoaded && context.drawImage( this.shadow, x, y);
