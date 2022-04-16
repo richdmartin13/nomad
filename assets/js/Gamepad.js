@@ -31,13 +31,13 @@ class GamePad {
                 src: '/assets/images/ui/a.png',
                 x: 14, y: 16.75,
                 size: buttonSize,
-                keyCode: "Enter"
+                keyCode: "KeyE"
             },
             b: {
                 src: '/assets/images/ui/b.png',
                 x: 13, y: 17.75,
                 size: buttonSize,
-                keyCode: "Numpad0"
+                keyCode: "KeyQ"
             },
             select: {
                 src: '/assets/images/ui/select.png',
@@ -86,33 +86,55 @@ class GamePad {
 
     bindClick(canvas) {
         const rect = canvas.getBoundingClientRect()
-        
-            document.querySelector(".game-canvas").addEventListener("pointerdown", (e) => {
-                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
-                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
-                Object.keys(this.buttonObjects).forEach(key => {
-                    if (this.buttonObjects[key].containsPoint(x, y)) {
-                        document.dispatchEvent(new KeyboardEvent("keydown", {
-                            code: this.buttonObjects[key].keyCode
-                        }));
-                    }
-                });
+        document.querySelector(".game-canvas").addEventListener("pointerdown", (e) => {
+            const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+            const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
+            Object.keys(this.buttonObjects).forEach(key => {
+                if (this.buttonObjects[key].containsPoint(x, y)) {
+                    document.dispatchEvent(new KeyboardEvent("keydown", {
+                        code: this.buttonObjects[key].keyCode
+                    }));
+                }
             });
-            document.querySelector(".game-canvas").addEventListener("pointerup", (e) => {
-                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
-                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
-                Object.keys(this.buttonObjects).forEach(key => {
-                    if (this.buttonObjects[key].containsPoint(x, y)) {
-                        document.dispatchEvent(new KeyboardEvent("keyup", {
-                            code: this.buttonObjects[key].keyCode
-                        }));
-                    }
-                });
+        });
+        document.querySelector(".game-canvas").addEventListener("pointerup", (e) => {
+            const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+            const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
+            Object.keys(this.buttonObjects).forEach(key => {
+                if (this.buttonObjects[key].containsPoint(x, y)) {
+                    document.dispatchEvent(new KeyboardEvent("keyup", {
+                        code: this.buttonObjects[key].keyCode
+                    }));
+                }
             });
+
+        });
+        document.querySelector(".game-canvas").addEventListener("pointermove", (e) => {
+            const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+            const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
+
+            Object.keys(this.buttonObjects).forEach(key => {
+                if (this.buttonObjects[key].containsPoint(x, y)) {
+                    document.dispatchEvent(new KeyboardEvent("keyup", {
+                        code: this.buttonObjects[key].keyCode
+                    }));
+                }
+            });
+
+
+            Object.keys(this.buttonObjects).forEach(key => {
+                if (this.buttonObjects[key].containsPoint(x, y)) {
+                    document.dispatchEvent(new KeyboardEvent("keydown", {
+                        code: this.buttonObjects[key].keyCode
+                    }));
+                }
+            });
+
+        });
     }
 
 }
@@ -136,7 +158,7 @@ class Button {
     }
 
     containsPoint(x, y) {
-        if (x < this.x - 0.2 || x > this.x + 1.2 || y < this.y - 0.2 || y > this.y + 1.2) {
+        if (x < this.x - 0.1 || x > this.x + 1.1 || y < this.y - 0.1 || y > this.y + 1.1) {
             return false;
         }
         console.log(x, y)

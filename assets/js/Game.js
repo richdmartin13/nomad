@@ -72,6 +72,7 @@ class World {
     }
 
     bindActionInput() {
+        //A
         new KeyPressListener('Enter', () => {
             //is there someone to talk to?
             this.map.checkForActionCutscene();
@@ -79,6 +80,18 @@ class World {
         new KeyPressListener('KeyE', () => {
             //is there someone to talk to?
             this.map.checkForActionCutscene();
+        })
+        //B
+        new KeyPressListener('KeyQ', () => {
+
+        })
+        //Select
+        new KeyPressListener('KeyF', () => {
+
+        })
+        //Start
+        new KeyPressListener('KeyR', () => {
+            location.reload();
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });
