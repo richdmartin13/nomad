@@ -1,14 +1,15 @@
 .Message {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 36px;
-    padding: 8px;
+    left: 20vw;
+    right: 20vw;
+    bottom: 30px;
+    height: 128px;
+    padding: 30px;
     background: var(--dialog-background);
     border-top: 1px solid var(--menu-border-color);
     color: var(--menu-font-color);
     font-family: 'Press Start 2P', cursive;
+    border-radius: 20px;
 
     display: flex;
     flex-flow: row nowrap;
@@ -17,12 +18,18 @@
     z-index: 1
 }
 
+.Message:before {
+    box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
+    filter: blur(10px);
+}
+
 .Message_p {
     margin: 0;
-    font-size: 8px;
+    font-size: 24px;
     color: var(--menu-font-color);
+    opacity: 1;
     font-family: 'Press Start 2P', cursive;
-    line-height: 10px;
+    line-height: 28px;
 }
 
 .Message span {
@@ -35,7 +42,7 @@
 
 .Message_button {
     margin: 0;
-    font-size: 8px;
+    font-size: 24px;
     padding: 0;
     -webkit-appearance: none;
     background: none;
@@ -45,6 +52,52 @@
     color: var(--menu-font-color);
 
     position: absolute;
-    right: 2px;
-    bottom: 0;
+    right: 10px;
+    bottom: 4px;
+}
+
+@media only screen and (max-width: 1024px) {
+    .Message {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        height: 70px;
+        padding: 8px;
+        background: var(--dialog-background);
+        border-bottom: 1px solid var(--menu-border-color);
+        color: var(--menu-font-color);
+        font-family: 'Press Start 2P', cursive;
+        border-radius: 10px;
+    
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        z-index: 1
+    }
+
+    .Message_p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--menu-font-color);
+        font-family: 'Press Start 2P', cursive;
+        line-height: 16px;
+    }
+
+    .Message_button {
+        margin: 0;
+        font-size: 10px;
+        padding: 0;
+        -webkit-appearance: none;
+        background: none;
+        border: 0;
+        font-family: 'Press Start 2P', cursive;
+        cursor: pointer;
+        color: var(--menu-font-color);
+    
+        position: absolute;
+        right: 2px;
+        bottom: 0;
+    }
 }

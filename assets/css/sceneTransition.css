@@ -3,10 +3,11 @@
     left: 0;
     top: 0;
     right: 0;
-    bottom: 0;
+    height: 140vh;
     background: #fff;
     opacity: 0;
     animation: scene-transition-fade-in 0.3s forwards;
+    z-index: 2;
 }
 
 .SceneTransition.fade-out {

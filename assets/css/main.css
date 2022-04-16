@@ -1,11 +1,11 @@
 :root {
-    --border-color: #212121;
-    --dialog-background: #FFF3B4;
+    --border-color: #000000;
+    --dialog-background: rgba(88, 111, 124, 0.8);
 
-    --menu-background: #FFE802;
-    --menu-border-color: #A48465;
-    --menu-font-color: #3A160D;
-    --menu-selected-background: #7FC2FF;
+    --menu-background: #2F4550;
+    --menu-border-color: #B8DBD9;
+    --menu-font-color: #F4F4F9;
+    --menu-selected-background: #586F7C;
 }
 
 body {
@@ -30,20 +30,23 @@ body {
 
 .game-container {
     position: relative;
-    width: 400px;
-    height: 400px;
-    /* width: 100vw;
-    height: 100vw; */
+    width: 100%;
+    height: 100vh;
     outline: 1px solid rgba(0,0,0,0.2);
 
-    transform: scale(3.0);
-    max-width: 100vw;
     transition: 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zoom {
+    transform: scale(5);
 }
 
 .game-container canvas {
     max-width: 100vw;
-    /* width: 100%; */
+    width: 100%;
     image-rendering: pixelated;
 }
 
@@ -53,7 +56,6 @@ body {
     flex-flow: row-reverse nowrap;
     align-items: center;
     justify-content: space-around;
-    margin-top: 200px;
     user-select: none;
     -webkit-touch-callout: none;
 }
@@ -117,33 +119,22 @@ img {
 }
 
 @media only screen and (max-width: 1024px) {
-    .game-container {
-        transform: scale(2);
-        margin: 0 auto;
-        transition: 0.5s ease;
+    .buttons {
+        position: absolute;
+        bottom: 100px;
+        left: 0;
+        right: 0;
+        margin-bottom: 100px;
+        padding-bottom: 100px;
     }
 }
 
 @media only screen and (max-width: 720px) {
-    body {
-        padding-top: 200px;
-        justify-content: space-evenly;
-    }
-
-    .game-container {
-        transform: scale(0.9);
-        margin: 0 auto;
-        transition: 0.5s ease;
-    }
-
-    .zoom {
-        transform: scale(1.5);
-        margin: 0 auto;
-        object-fit: cover;
-    }
-
     .buttons {
-        margin-top: 100px;
-        margin-bottom: 200px;
+        position: absolute;
+        bottom: 100px;
+        left: 0;
+        right: 0;
+        padding-bottom: 100px;
     }
 }

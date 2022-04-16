@@ -14,7 +14,7 @@ class World {
     startGameLoop() {
         const step = () => {
 
-            // this.canvas.height = this.canvas.width * 0.565;
+            this.canvas.height = this.canvas.width;
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
             //Establish Camera
