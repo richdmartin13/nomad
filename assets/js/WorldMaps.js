@@ -1,5 +1,6 @@
 window.WorldMaps = {
     Procedural: {
+        id: 'Procedural',
         mapSize: {x: 32, y: 32},
         tileSize: {x: 16, y: 16},
         lowerSrc: "",
@@ -46,6 +47,7 @@ window.WorldMaps = {
         },
     },
     Office: {
+        id: 'Office',
         lowerSrc: "/assets/images/maps/map.png",
         upperSrc: "/assets/images/maps/mapUpper.png",
         custom: true,

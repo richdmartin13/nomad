@@ -1,5 +1,6 @@
 class WorldMap {
     constructor(config) {
+        this.id = config.id;
         this.world = null;
         this.gameObjects = config.gameObjects;
         this.initialGameObjects = config.gameObjects;
@@ -149,8 +150,7 @@ class WorldMap {
     }
 
     addTerrainObjects(mapSize) {
-        this.gameObjects = this.initialGameObjects;
-        // The above doesn't work, so figure that out.
+        this.resetTerrainObjects()
 
         for (var y = 0; y < mapSize.y; y++) {
             for (var x = 0; x < mapSize.x; x++) {
@@ -227,6 +227,15 @@ class WorldMap {
 
             }
         }
+    }
+
+    resetTerrainObjects() {
+        Object.keys(this.gameObjects).forEach(key => {
+            if(key.includes(',')) {
+                console.log(`removing entity ${key.id}`);
+                delete this.gameObjects[key.id];
+            }
+        })
     }
 
     getRandomSpawn() {

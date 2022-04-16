@@ -9,6 +9,7 @@ class World {
         this.tileSize = { x: 16, y: 16 }
         this.smoothing = 60;
         this.terrain = null;
+        this.mapList = {};
     }
 
     startGameLoop() {
@@ -19,10 +20,6 @@ class World {
 
             //Establish Camera
             const cameraMan = this.map.gameObjects.hero;
-            
-            // //Draw Terrain Objects
-            // this.map.addTerrainObjects(this.mapSize);
-            // console.log(this.map.gameObjects);
 
             //Update Game Objects
             Object.values(this.map.gameObjects).forEach(object => {
@@ -36,7 +33,7 @@ class World {
             this.map.drawLower(this.context, cameraMan)
 
             //Draw Perlin Map
-            if(!this.map.custom) {
+            if(!this.map.custom && this.map.terrain == null) {
                 this.map.drawMap(this.map, this.context, this.mapSize, this.tileSize, cameraMan);
             }
 
@@ -82,14 +79,22 @@ class World {
     }
 
     startMap(mapConfig) {
-        this.map = new WorldMap(mapConfig);
-        if(!this.map.custom){
-            this.map.drawWorldBorder(this.mapSize);
-            this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
 
-            this.map.addTerrainObjects(this.mapSize);
-            // console.log(this.map.gameObjects);
+        //Check if a map exists in the cache with the designated Key
+        if(this.mapList[mapConfig.id] == null) {
+            //If not, create it and add it to the cache
+            this.map = new WorldMap(mapConfig);
+            if(!this.map.custom && this.map.terrain == null){
+                this.map.drawWorldBorder(this.mapSize);
+                this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
+                this.map.addTerrainObjects(this.mapSize);
+            }
+            this.mapList[mapConfig.id] = this.map;
+        } else {
+            //Else, pull it from the cache instead of generating a new one
+            this.map = this.mapList[mapConfig.id];
         }
+
         this.map.world = this;
         this.map.mountObjects();
     }
