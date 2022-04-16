@@ -5,49 +5,49 @@ class GamePad {
         this.buttons = {
             up: {
                 src: '/assets/images/ui/up.png',
-                x: 10, y: 17,
+                x: 10, y: 16.5,
                 size: buttonSize,
                 keyCode: "ArrowUp"
             },
             down: {
                 src: '/assets/images/ui/down.png',
-                x: 10, y: 18.5,
+                x: 10, y: 18,
                 size: buttonSize,
                 keyCode: "ArrowDown"
             },
             left: {
                 src: '/assets/images/ui/left.png',
-                x: 9.25, y: 17.75,
+                x: 9.25, y: 17.25,
                 size: buttonSize,
                 keyCode: "ArrowLeft"
             },
             right: {
                 src: '/assets/images/ui/right.png',
-                x: 10.75, y: 17.75,
+                x: 10.75, y: 17.25,
                 size: buttonSize,
                 keyCode: "ArrowRight"
             },
             a: {
                 src: '/assets/images/ui/a.png',
-                x: 14, y: 17,
+                x: 14, y: 16.75,
                 size: buttonSize,
-                keyCode: "KeyE"
+                keyCode: "Enter"
             },
             b: {
                 src: '/assets/images/ui/b.png',
-                x: 13, y: 18,
+                x: 13, y: 17.75,
                 size: buttonSize,
-                keyCode: "KeyQ"
+                keyCode: "Numpad0"
             },
             select: {
                 src: '/assets/images/ui/select.png',
-                x: 11.5, y: 16,
+                x: 11.5, y: 15.5,
                 size: buttonSize,
                 keyCode: "KeyF"
             },
             start: {
                 src: '/assets/images/ui/start.png',
-                x: 12.5, y: 16,
+                x: 12.5, y: 15.5,
                 size: buttonSize,
                 keyCode: "KeyR"
             },
@@ -67,7 +67,6 @@ class GamePad {
                 keyCode: this.buttons[b].keyCode
             }))
         });
-        console.log(this.buttonObjects);
     }
 
     draw({ context }) {
@@ -87,36 +86,8 @@ class GamePad {
 
     bindClick(canvas) {
         const rect = canvas.getBoundingClientRect()
-
-        if (typeof screen.orientation === 'undefined') {
-            document.querySelector(".game-canvas").addEventListener("touchstart", () => {
-                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
-                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
-
-                Object.keys(this.buttonObjects).forEach(key => {
-                    if (this.buttonObjects[key].containsPoint(x, y)) {
-                        document.dispatchEvent(new KeyboardEvent("keydown", {
-                            code: this.buttonObjects[key].keyCode
-                        }));
-                    } else {
-
-                    }
-                });
-            })
-            document.querySelector(".game-canvas").addEventListener("touchend", () => {
-                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
-                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
-
-                Object.keys(this.buttonObjects).forEach(key => {
-                    if (this.buttonObjects[key].containsPoint(x, y)) {
-                        document.dispatchEvent(new KeyboardEvent("keyup", {
-                            code: this.buttonObjects[key].keyCode
-                        }));
-                    }
-                });
-            })
-        } else {
-            document.querySelector(".game-canvas").addEventListener("mousedown", (e) => {
+        
+            document.querySelector(".game-canvas").addEventListener("pointerdown", (e) => {
                 const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
                 const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
@@ -129,7 +100,7 @@ class GamePad {
                 });
 
             });
-            document.querySelector(".game-canvas").addEventListener("mouseup", (e) => {
+            document.querySelector(".game-canvas").addEventListener("pointerup", (e) => {
                 const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
                 const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
@@ -142,8 +113,6 @@ class GamePad {
                 });
 
             });
-
-        }
     }
 
 }
@@ -167,10 +136,10 @@ class Button {
     }
 
     containsPoint(x, y) {
-        if (x < this.x || x > this.x + 1 || y < this.y || y > this.y + 1) {
+        if (x < this.x - 0.2 || x > this.x + 1.2 || y < this.y - 0.2 || y > this.y + 1.2) {
             return false;
         }
-
+        console.log(x, y)
         return true;
     }
 
