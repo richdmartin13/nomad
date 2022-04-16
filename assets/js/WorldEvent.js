@@ -44,6 +44,26 @@ class WorldEvent {
         document.addEventListener("PersonFinishedWalking", completeHandler)
     }
 
+    run(resolve) {
+        const who = this.map.gameObjects[ this.event.who ];
+        who.startBehavior({
+            map: this.map
+        }, {
+            type: "run",
+            direction: this.event.direction,
+            retry: true
+        })
+
+        const completeHandler = e => {
+            if(e.detail.whoId === this.event.who) {
+                document.removeEventListener("PersonFinishedRunning", completeHandler);
+                resolve();
+            }
+        }
+
+        document.addEventListener("PersonFinishedRunning", completeHandler)
+    }
+
     message(resolve) {
         const message = new Message({
             who: this.event.who,

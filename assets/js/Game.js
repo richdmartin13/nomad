@@ -10,6 +10,7 @@ class World {
         this.smoothing = 60;
         this.terrain = null;
         this.mapList = {};
+        this.gamePad = null;
     }
 
     startGameLoop() {
@@ -48,7 +49,12 @@ class World {
             })
 
             //Draw Upper Layer
-            this.map.drawUpper(this.context, cameraMan)
+            this.map.drawUpper(this.context, cameraMan);
+
+            //Draw GamePad
+            // if(typeof screen.orientation === 'undefined') {
+                this.gamePad.draw({context: this.context});
+            // }
 
             requestAnimationFrame(() => {
                 step();
@@ -75,7 +81,8 @@ class World {
             this.map.checkForActionCutscene();
         })
 
-        new GamePad();
+        this.gamePad = new GamePad({ buttonSize: 16 });
+        this.gamePad.bindClick(this.canvas);
     }
 
     startMap(mapConfig) {

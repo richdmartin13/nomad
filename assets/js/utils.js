@@ -31,4 +31,17 @@ const utils = {
     getRandomInt(max) {
         return Math.floor(Math.random() * max);
     },
+    getScalingFactor() {
+        var width = window.innerWidth;
+
+        switch (true) {
+            case width <= 720:
+                return 3.4;
+            case width > 720 && width <= 1024:
+                return 3;
+            case width > 1024:
+            default:
+                return 4.8;
+        }
+    },
 }

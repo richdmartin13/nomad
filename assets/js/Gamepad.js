@@ -1,90 +1,177 @@
 class GamePad {
-    constructor() {
+    constructor({ buttonSize }) {
+        this.buttonSize = buttonSize || 16;
+
+        this.buttons = {
+            up: {
+                src: '/assets/images/ui/up.png',
+                x: 10, y: 17,
+                size: buttonSize,
+                keyCode: "ArrowUp"
+            },
+            down: {
+                src: '/assets/images/ui/down.png',
+                x: 10, y: 18.5,
+                size: buttonSize,
+                keyCode: "ArrowDown"
+            },
+            left: {
+                src: '/assets/images/ui/left.png',
+                x: 9.25, y: 17.75,
+                size: buttonSize,
+                keyCode: "ArrowLeft"
+            },
+            right: {
+                src: '/assets/images/ui/right.png',
+                x: 10.75, y: 17.75,
+                size: buttonSize,
+                keyCode: "ArrowRight"
+            },
+            a: {
+                src: '/assets/images/ui/a.png',
+                x: 14, y: 17,
+                size: buttonSize,
+                keyCode: "KeyE"
+            },
+            b: {
+                src: '/assets/images/ui/b.png',
+                x: 13, y: 18,
+                size: buttonSize,
+                keyCode: "KeyQ"
+            },
+            select: {
+                src: '/assets/images/ui/select.png',
+                x: 11.5, y: 16,
+                size: buttonSize,
+                keyCode: "KeyF"
+            },
+            start: {
+                src: '/assets/images/ui/start.png',
+                x: 12.5, y: 16,
+                size: buttonSize,
+                keyCode: "KeyR"
+            },
+        }
+        this.buttonObjects = [];
+
+        this.init();
+    }
+
+    init() {
+        Object.keys(this.buttons).forEach(b => {
+            this.buttonObjects.push(new Button({
+                src: this.buttons[b].src,
+                x: this.buttons[b].x,
+                y: this.buttons[b].y,
+                size: this.buttons[b].size,
+                keyCode: this.buttons[b].keyCode
+            }))
+        });
+        console.log(this.buttonObjects);
+    }
+
+    draw({ context }) {
+        Object.keys(this.buttonObjects).forEach(key => {
+            var x = this.buttonObjects[key].x + utils.withGrid(12);
+            var y = this.buttonObjects[key].y + utils.withGrid(16);
+
+            context.drawImage(
+                this.buttonObjects[key].image,
+                utils.withGrid(this.buttonObjects[key].x),
+                utils.withGrid(this.buttonObjects[key].y),
+                this.buttonObjects[key].size,
+                this.buttonObjects[key].size
+            )
+        })
+    }
+
+    bindClick(canvas) {
+        const rect = canvas.getBoundingClientRect()
+
         if (typeof screen.orientation === 'undefined') {
-            var buttons = document.querySelector(".buttons");
-            buttons.innerHTML = (`
-        <div class="ab_btns">
-            <div>
-                <p>&nbsp;</p>
-                <button class="controls" id="b"><img class="ctrl-img" src="/assets/images/ui/B.png"/></button>
-            </div>
-            <div>
-                <button class="controls" id="a"><img class="ctrl-img" src="/assets/images/ui/A.png"/></button>
-                <p>&nbsp;</p>
-            </div>
-        </div>
-        <div class="mvmt_buttons">
-            <button class="controls" id="left"><img class="ctrl-img" src="/assets/images/ui/left.png"/></button>
-            <div class="updown">
-                <button class="controls" id="up"><img class="ctrl-img" src="/assets/images/ui/up.png"/></button>
-                <br/>
-                <button class="controls" id="down"><img class="ctrl-img" src="/assets/images/ui/down.png"/></button>
-            </div>
-            <button class="controls" id="right"><img class="ctrl-img" src="/assets/images/ui/right.png"/></button>
-        </div>
-        `)
+            document.querySelector(".game-canvas").addEventListener("touchstart", () => {
+                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
-            document.querySelector("#a").addEventListener("click", () => {
-                document.dispatchEvent(new KeyboardEvent("keydown", {
-                    code: 'KeyE'
-                }))
-                document.dispatchEvent(new KeyboardEvent("keyup", {
-                    code: 'KeyE'
-                }))
+                Object.keys(this.buttonObjects).forEach(key => {
+                    if (this.buttonObjects[key].containsPoint(x, y)) {
+                        document.dispatchEvent(new KeyboardEvent("keydown", {
+                            code: this.buttonObjects[key].keyCode
+                        }));
+                    } else {
+
+                    }
+                });
+            })
+            document.querySelector(".game-canvas").addEventListener("touchend", () => {
+                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
+
+                Object.keys(this.buttonObjects).forEach(key => {
+                    if (this.buttonObjects[key].containsPoint(x, y)) {
+                        document.dispatchEvent(new KeyboardEvent("keyup", {
+                            code: this.buttonObjects[key].keyCode
+                        }));
+                    }
+                });
+            })
+        } else {
+            document.querySelector(".game-canvas").addEventListener("mousedown", (e) => {
+                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
+
+                Object.keys(this.buttonObjects).forEach(key => {
+                    if (this.buttonObjects[key].containsPoint(x, y)) {
+                        document.dispatchEvent(new KeyboardEvent("keydown", {
+                            code: this.buttonObjects[key].keyCode
+                        }));
+                    }
+                });
+
             });
-            document.querySelector("#b").addEventListener("click", () => {
-                document.dispatchEvent(new KeyboardEvent("keydown", {
-                    code: 'KeyQ'
-                }))
-                document.dispatchEvent(new KeyboardEvent("keyup", {
-                    code: 'KeyQ'
-                }))
-            })
+            document.querySelector(".game-canvas").addEventListener("mouseup", (e) => {
+                const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+                const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
-            document.querySelector("#up").addEventListener("touchstart", () => {
-                document.dispatchEvent(new KeyboardEvent("keydown", {
-                    code: 'ArrowUp'
-                }))
-            })
-            document.querySelector("#up").addEventListener("touchend", () => {
-                document.dispatchEvent(new KeyboardEvent("keyup", {
-                    code: 'ArrowUp'
-                }))
-            })
+                Object.keys(this.buttonObjects).forEach(key => {
+                    if (this.buttonObjects[key].containsPoint(x, y)) {
+                        document.dispatchEvent(new KeyboardEvent("keyup", {
+                            code: this.buttonObjects[key].keyCode
+                        }));
+                    }
+                });
 
-            document.querySelector("#down").addEventListener("touchstart", () => {
-                document.dispatchEvent(new KeyboardEvent("keydown", {
-                    code: 'ArrowDown'
-                }))
-            })
-            document.querySelector("#down").addEventListener("touchend", () => {
-                document.dispatchEvent(new KeyboardEvent("keyup", {
-                    code: 'ArrowDown'
-                }))
-            })
-
-            document.querySelector("#left").addEventListener("touchstart", () => {
-                document.dispatchEvent(new KeyboardEvent("keydown", {
-                    code: 'ArrowLeft'
-                }))
-            })
-            document.querySelector("#left").addEventListener("touchend", () => {
-                document.dispatchEvent(new KeyboardEvent("keyup", {
-                    code: 'ArrowLeft'
-                }))
-            })
-
-            document.querySelector("#right").addEventListener("touchstart", () => {
-                document.dispatchEvent(new KeyboardEvent("keydown", {
-                    code: 'ArrowRight'
-                }))
-            })
-            document.querySelector("#right").addEventListener("touchend", () => {
-                document.dispatchEvent(new KeyboardEvent("keyup", {
-                    code: 'ArrowRight'
-                }))
-            })
+            });
 
         }
     }
+
+}
+
+class Button {
+    constructor({ src, x, y, size, keyCode }) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.keyCode = keyCode;
+        this.isActive = false;
+
+        this.image = new Image();
+        this.image.src = src;
+
+        this.init();
+    }
+
+    init() {
+
+    }
+
+    containsPoint(x, y) {
+        if (x < this.x || x > this.x + 1 || y < this.y || y > this.y + 1) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

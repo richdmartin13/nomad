@@ -44,14 +44,14 @@ class WorldMap {
     drawLower(context, cameraMan) {
         context.drawImage(this.lower,
             utils.withGrid(12) - cameraMan.posX,
-            utils.withGrid(16) - cameraMan.posY
+            utils.withGrid(14) - cameraMan.posY
         );
     }
 
     drawUpper(context, cameraMan) {
         context.drawImage(this.upper,
             utils.withGrid(12) - cameraMan.posX,
-            utils.withGrid(16) - cameraMan.posY
+            utils.withGrid(14) - cameraMan.posY
         )
     }
 
@@ -136,7 +136,7 @@ class WorldMap {
                         sprite.x, sprite.y,
                         sprite.w, sprite.h,
                         utils.withGrid(12) + utils.withGrid(x) - cameraMan.posX,
-                        utils.withGrid(16) + utils.withGrid(y) - cameraMan.posY,
+                        utils.withGrid(14) + utils.withGrid(y) - cameraMan.posY,
                         tileSize.x, tileSize.y
                     )
                 }
