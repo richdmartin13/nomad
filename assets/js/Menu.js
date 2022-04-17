@@ -23,23 +23,20 @@ class Menu {
         if (context === null) { return; }
         var tileset = new Image();
         tileset.src = this.src;
-        var xstart = utils.withGrid(9);
-        var ystart = utils.withGrid(5);
+        var xstart = utils.withGrid(9.5);
+        var ystart = utils.withGrid(6);
 
         var grid = [
-            ['tl', 'tc', 'tc', 'tc', 'tc', 'tc', 'tr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['bl', 'bc', 'bc', 'bc', 'bc', 'bc', 'br'],
+            ['tl', 'tc', 'tc', 'tc', 'tc', 'tr'],
+            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
+            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
+            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
+            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
+            ['bl', 'bc', 'bc', 'bc', 'bc', 'br'],
         ]
 
-        for(var x = 0; x < 7; x++ ) {
-            for(var y = 0; y < 7; y++ ) {
-                console.log(`drew from ${tileset.src}, ${this.sprites[grid[x][y]].sprite.x},
-                ${this.sprites[grid[x][y]].sprite.y}, at position ${xstart}, ${ystart}`)
+        for(var x = 0; x < 6; x++ ) {
+            for(var y = 0; y < 6; y++ ) {
                 context.drawImage(
                     tileset, 
                     this.sprites[grid[x][y]].sprite.x,
@@ -50,7 +47,7 @@ class Menu {
                 )
                 xstart += 16;
             }
-            xstart = utils.withGrid(9);
+            xstart = utils.withGrid(9.5);
             ystart +=16;
         }
     }

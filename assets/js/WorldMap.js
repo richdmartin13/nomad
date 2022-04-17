@@ -37,7 +37,9 @@ class WorldMap {
             rock: 12,
             tree: 8,
             cactus: 6,
-            leaves: 20
+            leaves: 20,
+            waterRock: 2,
+            waves: 12
         }
     }
 
@@ -78,13 +80,16 @@ class WorldMap {
         this.tileset = new Image();
 
         var sprites = {
-            water: { sprite: { x: 0, y: 0, w: 16, h: 16 } },
-            sand: { sprite: { x: 16, y: 0, w: 16, h: 16 } },
-            grass: { sprite: { x: 32, y: 0, w: 16, h: 16 } },
-            dirt: { sprite: { x: 48, y: 0, w: 16, h: 16 } },
-            sandE: { sprite: { x: 16, y: 16, w: 16, h: 16 } },
-            grassE: { sprite: { x: 32, y: 16, w: 16, h: 16 } },
-            dirtE: { sprite: { x: 48, y: 16, w: 16, h: 16 } },
+            sand: { sprite: { x: 0, y: 0, w: 16, h: 16 } },
+            grass: { sprite: { x: 16, y: 0, w: 16, h: 16 } },
+            dirt: { sprite: { x: 32, y: 0, w: 16, h: 16 } },
+            sandE: { sprite: { x: 0, y: 16, w: 16, h: 16 } },
+            grassE: { sprite: { x: 16, y: 16, w: 16, h: 16 } },
+            dirtE: { sprite: { x: 32, y: 16, w: 16, h: 16 } },
+            water: { sprite: { x: 48, y: 0, w: 16, h: 16 } },
+            waterL: { sprite: { x: 48, y: 16, w: 16, h: 16 }},
+            waterC: { sprite: { x: 64, y: 0, w: 16, h: 16 } },
+            waterR: { sprite: { x: 64, y: 16, w: 16, h: 16 }},
         }
         var sprite = null;
 
@@ -123,6 +128,15 @@ class WorldMap {
                     case value < 0.3:
                     default:
                         sprite = sprites.water.sprite;
+                        if (this.map[y-1] && this.map[x][y - 1] >= 0.3) {
+                            sprite = sprites.waterC.sprite;
+                            if(this.map[y-1] && this.map[x+1] && this.map[x+1][y-1] <= 0.3) {
+                                sprite = sprites.waterR.sprite;
+                            } 
+                            if(this.map[y-1] && this.map[x-1] && this.map[x-1][y-1] <= 0.3) {
+                                sprite = sprites.waterL.sprite;
+                            }
+                        }
                         ctx.fillStyle = this.colors.water;
                         this.addWall(utils.withGrid(x), utils.withGrid(y))
                         break;
@@ -159,15 +173,20 @@ class WorldMap {
                 var source = null;
                 var type = null;
                 var leafSource = null;
+                var waveSource = null;
                 var placeObject = false;
                 var placeLeaves = false;
-
-                if (this.map[x][y + 1] < 0.3) {
-                    // console.log(x, y)
-                    spawn = 0;
-                }
+                var placeWaves = false;
 
                 switch (true) {
+                    case value < 0.3 || value == null:
+                        if(spawn > 100 - this.spawnRates.waterRock) {
+                            var tex = Math.floor(Math.random() * 2);
+                            source = `/assets/images/world/waterrock${tex}.png`;
+                            placeObject = true;
+                            type = 'waterrock';
+                        }
+                    break;
                     case value > 0.4:
                         //rocks spawn code
                         if (spawn > 100 - this.spawnRates.rock) {
@@ -195,7 +214,12 @@ class WorldMap {
                         }
                         break;
                     default:
-
+                        if(spawn > 100 - this.spawnRates.waterRock) {
+                            var tex = Math.floor(Math.random() * 2);
+                            source = `/assets/images/world/waterrock${tex}.png`;
+                            placeObject = true;
+                            type = 'waterrock';
+                        }
                         break;
                 }
 
@@ -210,6 +234,20 @@ class WorldMap {
                             placeLeaves = true;
                         }
                         break;
+                    case value < 0.1 || value == null: 
+                        //waves spawn code
+                        if(spawn > 100 - this.spawnRates.waves) {
+                            var tex = Math.floor(Math.random() * 3);
+                            waveSource = `/assets/images/world/wave${tex}.png`;
+                            placeWaves = true;
+                            type = 'wave';
+                        }
+                    break;
+                }
+
+                if (this.map[x][y + 1] < 0.3 && type !== 'waterrock') {
+                    // console.log(x, y)
+                    placeObject = false;
                 }
 
                 if (placeObject) {
@@ -226,6 +264,15 @@ class WorldMap {
                         x: utils.withGrid(x),
                         y: utils.withGrid(y),
                         src: leafSource,
+                        collision: false
+                    });
+                }
+
+                if (placeWaves) {
+                    this.gameObjects[`${x},${y}`] = new TerrainObject({
+                        x: utils.withGrid(x),
+                        y: utils.withGrid(y),
+                        src: waveSource,
                         collision: false
                     });
                 }
