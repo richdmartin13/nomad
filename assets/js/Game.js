@@ -5,7 +5,7 @@ class World {
         this.context = this.canvas.getContext('2d');
         this.map = null;
         this.tileMap = null;
-        this.mapSize = { x: 32, y: 32 }
+        this.mapSize = { x: 128, y: 128 }
         this.tileSize = { x: 16, y: 16 }
         this.smoothing = 60;
         this.terrain = null;
