@@ -4,6 +4,7 @@ class TerrainObject extends GameObject {
 
         this.type = config.type;
         this.callback = config.callback || null;
+        this.hasItem = Math.random() * 100 > 50;
 
         this.offset = { x: 0, y: 0 }
 

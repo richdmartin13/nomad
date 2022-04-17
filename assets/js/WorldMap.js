@@ -88,10 +88,10 @@ class WorldMap {
         }
         var sprite = null;
 
+        this.tileset.src = this.tilesetURL;
         this.tileset.onload = () => {
             this.tilesetLoaded = true;
         }
-        this.tileset.src = this.tilesetURL;
 
         for (var y = 0; y < mapSize.y; y++) {
             for (var x = 0; x < mapSize.x; x++) {
@@ -157,6 +157,7 @@ class WorldMap {
                 var value = this.map[x][y];
                 var spawn = Math.floor(Math.random() * 100);
                 var source = null;
+                var type = null;
                 var leafSource = null;
                 var placeObject = false;
                 var placeLeaves = false;
@@ -173,6 +174,7 @@ class WorldMap {
                             var tex = Math.floor(Math.random() * 6);
                             source = `/assets/images/world/rocks${tex}.png`;
                             placeObject = true;
+                            type = 'rock';
                         }
                     case value > 0.4 && value < 0.8:
                         //tree spawn code
@@ -180,6 +182,7 @@ class WorldMap {
                             var tex = Math.floor(Math.random() * 2);
                             source = `/assets/images/world/bush${tex}.png`;
                             placeObject = true;
+                            type = 'tree';
                         }
                         break;
                     case value > 0.3 && value < 0.4:
@@ -188,6 +191,7 @@ class WorldMap {
                             var tex = Math.floor(Math.random() * 2);
                             source = `/assets/images/world/cactus${tex}.png`;
                             placeObject = true;
+                            type = 'cactus';
                         }
                         break;
                     default:
@@ -212,7 +216,8 @@ class WorldMap {
                     this.gameObjects[`${x},${y}`] = new TerrainObject({
                         x: utils.withGrid(x),
                         y: utils.withGrid(y),
-                        src: source
+                        src: source,
+                        type: type
                     });
                 }
 
@@ -282,6 +287,7 @@ class WorldMap {
 
             object.mount(this);
         })
+        console.log(this.gameObjects)
     }
 
     //Cutscene Code
@@ -301,6 +307,39 @@ class WorldMap {
         Object.values(this.gameObjects).forEach(object => object.doBehaviorEvent(this))
     }
 
+    async collectMaterial({type}) {
+        var item;
+
+        switch(true) {
+            case type === 'rock':
+                item = 'stone'
+                break;
+            case type === 'tree':
+                item = 'log'
+                break;
+            default:
+                item = null;
+                break;
+        }
+
+        if(item == null) {
+            return;
+        }
+
+        console.log(item)
+
+        const eventHandler = new WorldEvent({
+            event: {
+                who: this.gameObjects[hero],
+                type: type,
+                item: item
+            },
+            map: this,
+        })
+        await eventHandler.init();
+
+    }
+
     checkForActionCutscene() {
         const hero = this.gameObjects["hero"];
         const nextCoords = utils.nextPosition[hero.posX, hero.posY, hero.direction];
@@ -309,6 +348,10 @@ class WorldMap {
         });
         if (!this.isCutscenePlaying && match && match.talking.length) {
             this.startCutscene(match.talking[0].events)
+        }
+        if (!this.isCutscenePlaying && match && match.hasItem) {
+            this.collectMaterial(match.type);
+            console.log(match.type)
         }
     }
 

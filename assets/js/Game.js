@@ -11,6 +11,8 @@ class World {
         this.terrain = null;
         this.mapList = {};
         this.gamePad = null;
+        this.menu = null;
+        this.menuOpen = false;
     }
 
     startGameLoop() {
@@ -34,13 +36,13 @@ class World {
             this.map.drawLower(this.context, cameraMan)
 
             //Draw Perlin Map
-            if(!this.map.custom && this.map.terrain == null) {
+            if (!this.map.custom && this.map.terrain == null) {
                 this.map.drawMap(this.map, this.context, this.mapSize, this.tileSize, cameraMan);
             }
 
             //Draw Game Objects
             Object.values(this.map.gameObjects).sort((a, b) => {
-                if(!a.collision ) {
+                if (!a.collision) {
                     return -1
                 }
                 return a.posY - b.posY
@@ -52,7 +54,11 @@ class World {
             this.map.drawUpper(this.context, cameraMan);
 
             //Draw GamePad
-            this.gamePad.draw({context: this.context});
+            this.gamePad.draw({ context: this.context });
+
+            if (this.menuOpen) {
+                this.menu.draw({ context: this.context });
+            }
 
             requestAnimationFrame(() => {
                 step();
@@ -70,29 +76,37 @@ class World {
     }
 
     bindActionInput() {
-        //A
+        //Enter Key
         new KeyPressListener('Enter', () => {
-            //is there someone to talk to?
             this.map.checkForActionCutscene();
         })
+        //GamePad A, Keyboard E for Interaction
         new KeyPressListener('KeyE', () => {
-            //is there someone to talk to?
             this.map.checkForActionCutscene();
         })
-        //B
+        //GamePad B, Keyboard Q for Cancel, (run?)
         new KeyPressListener('KeyQ', () => {
-
+            this.menuOpen = false;
         })
-        //Select
+        //GamePad Select, Keyboard 1 for ?
         new KeyPressListener('Digit1', () => {
 
         })
-        //Option
+        //GamePad Option, Keyboard 3 for Reload || (?)
         new KeyPressListener('Digit3', () => {
-            
-        })
-        new KeyPressListener('KeyT', () => {
             location.reload();
+        })
+        //GamePad Home, Keyboard T for Inventory, (menu, reload?)
+        new KeyPressListener('KeyT', () => {
+            this.map.startCutscene([
+                { who: "hero", type: "idle", direction: "up", time: 10 },
+            ])
+            this.menuOpen = !this.menuOpen;
+            if (!this.menuOpen) {
+                this.map.startCutscene([
+                    { who: "hero", type: "idle", direction: "down", time: 10 },
+                ])
+            }
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });
@@ -102,10 +116,10 @@ class World {
     startMap(mapConfig) {
 
         //Check if a map exists in the cache with the designated Key
-        if(this.mapList[mapConfig.id] == null) {
+        if (this.mapList[mapConfig.id] == null) {
             //If not, create it and add it to the cache
             this.map = new WorldMap(mapConfig);
-            if(!this.map.custom && this.map.terrain == null){
+            if (!this.map.custom && this.map.terrain == null) {
                 this.map.drawWorldBorder(this.mapSize);
                 this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
                 this.map.addTerrainObjects(this.mapSize);
@@ -124,7 +138,7 @@ class World {
 
         // var heightRatio = 1.5;
         // this.canvas.height = this.canvas.width * heightRatio;
-        
+
         this.startMap(window.WorldMaps.Procedural);
 
         this.bindHeroPositionCheck();
@@ -132,6 +146,8 @@ class World {
 
         this.directionInput = new DirecitonInput();
         this.directionInput.init();
+
+        this.menu = new Menu();
 
         this.startGameLoop();
 

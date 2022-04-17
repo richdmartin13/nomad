@@ -1,8 +1,8 @@
 class GamePad {
-    constructor({ buttonSize }) {
+    constructor({ buttonSize, buttons }) {
         this.buttonSize = buttonSize || 16;
 
-        this.buttons = {
+        this.buttons = buttons || {
             up: {
                 src: '/assets/images/ui/up.png',
                 x: 10, y: 16.5,

@@ -82,6 +82,23 @@ class WorldEvent {
         });
     }
 
+    collect(resolve) {
+        const item = new InventoryItem({
+            who: this.event.who,
+            type: this.event.type,
+            item: this.event.item
+        })
+        const completeHandler = e => {
+            if(e.detail.whoId === this.event.who) {
+                document.removeEventListener("CollectItem", completeHandler);
+                resolve();
+            }
+        }
+        document.addEventListener("CollectItem", completeHandler)
+        this.event.who.addInventoryItem({type: item.type, item: item});
+        resolve();
+    }
+
     init() {
         return new Promise(resolve => {
             this[this.event.type](resolve)

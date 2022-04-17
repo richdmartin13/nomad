@@ -15,6 +15,12 @@ class Person extends GameObject {
         }
 
         this.sprite.setOffset(this.offset);
+
+        this.inventory = {
+            'materials': {},
+            'tools': {},
+            'food': {}
+        }
     }
 
     update(state) {
@@ -100,5 +106,24 @@ class Person extends GameObject {
             return;
         } 
         this.sprite.setAnimation("idle-" + this.direction);
+    }
+
+    addInventoryItem({type, item}) {
+        this.inventory[type][item.id] = item;
+        console.log(this.inventory);
+    }
+
+    removeInventoryItem({type, item}) {
+        var match;
+
+        Object.keys(this.inventory[type].forEach(key => {
+            match = key;
+        }))
+
+        if(match) {
+            delete this.inventory[type][match];
+        } else {
+            console.log('no match');
+        }
     }
 }
