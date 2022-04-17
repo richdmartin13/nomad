@@ -43,14 +43,26 @@ class GamePad {
                 src: '/assets/images/ui/select.png',
                 x: 11.5, y: 15.5,
                 size: buttonSize,
-                keyCode: "KeyF"
+                keyCode: "Digit1"
             },
-            start: {
+            option: {
                 src: '/assets/images/ui/start.png',
                 x: 12.5, y: 15.5,
                 size: buttonSize,
-                keyCode: "KeyR"
+                keyCode: "Digit3"
             },
+            startLeft: {
+                src: '/assets/images/ui/startLeft.png',
+                x: 11.75, y: 16.5,
+                size: buttonSize,
+                keyCode: "KeyT"
+            },
+            startRight: {
+                src: '/assets/images/ui/startRight.png',
+                x: 12.25, y: 16.5,
+                size: buttonSize,
+                keyCode: "KeyT"
+            }
         }
         this.buttonObjects = [];
 
@@ -93,6 +105,7 @@ class GamePad {
 
             Object.keys(this.buttonObjects).forEach(key => {
                 if (this.buttonObjects[key].containsPoint(x, y)) {
+
                     document.dispatchEvent(new KeyboardEvent("keydown", {
                         code: this.buttonObjects[key].keyCode
                     }));
@@ -113,28 +126,6 @@ class GamePad {
             });
 
         });
-        document.querySelector(".game-canvas").addEventListener("pointermove", (e) => {
-            const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
-            const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
-
-            Object.keys(this.buttonObjects).forEach(key => {
-                if (this.buttonObjects[key].containsPoint(x, y)) {
-                    document.dispatchEvent(new KeyboardEvent("keyup", {
-                        code: this.buttonObjects[key].keyCode
-                    }));
-                }
-            });
-
-
-            Object.keys(this.buttonObjects).forEach(key => {
-                if (this.buttonObjects[key].containsPoint(x, y)) {
-                    document.dispatchEvent(new KeyboardEvent("keydown", {
-                        code: this.buttonObjects[key].keyCode
-                    }));
-                }
-            });
-
-        });
     }
 
 }
@@ -144,6 +135,7 @@ class Button {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.initSize = size;
         this.keyCode = keyCode;
         this.isActive = false;
 
@@ -157,11 +149,19 @@ class Button {
 
     }
 
+    setScale(scale) {
+        if(scale !== null) {
+            this.size = this.size * scale;
+        } else {
+            this.size = this.initialSize;
+        }
+        
+    }
+
     containsPoint(x, y) {
         if (x < this.x - 0.1 || x > this.x + 1.1 || y < this.y - 0.1 || y > this.y + 1.1) {
             return false;
         }
-        console.log(x, y)
         return true;
     }
 

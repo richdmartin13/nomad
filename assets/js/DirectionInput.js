@@ -21,7 +21,6 @@ class DirecitonInput {
     init() {
         document.addEventListener('keydown', e => {
             const dir = this.map[e.code];
-            console.log(e.code)
             if (dir && this.heldDirections.indexOf(dir) === -1) {
                 this.heldDirections.unshift(dir);
             };

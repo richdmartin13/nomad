@@ -130,7 +130,7 @@ class WorldMap {
 
                 var render = true;
 
-                if(render) {
+                if(render && this.tilesetLoaded) {
                     ctx.drawImage(
                         this.tileset,
                         sprite.x, sprite.y,

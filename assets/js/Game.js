@@ -52,9 +52,7 @@ class World {
             this.map.drawUpper(this.context, cameraMan);
 
             //Draw GamePad
-            if(typeof screen.orientation === 'undefined') {
-                this.gamePad.draw({context: this.context});
-            }
+            this.gamePad.draw({context: this.context});
 
             requestAnimationFrame(() => {
                 step();
@@ -86,18 +84,19 @@ class World {
 
         })
         //Select
-        new KeyPressListener('KeyF', () => {
+        new KeyPressListener('Digit1', () => {
 
         })
-        //Start
-        new KeyPressListener('KeyR', () => {
+        //Option
+        new KeyPressListener('Digit3', () => {
+            
+        })
+        new KeyPressListener('KeyT', () => {
             location.reload();
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });
-        if(typeof screen.orientation === 'undefined') {
-            this.gamePad.bindClick(this.canvas);
-        }
+        this.gamePad.bindClick(this.canvas);
     }
 
     startMap(mapConfig) {
