@@ -52,9 +52,9 @@ class World {
             this.map.drawUpper(this.context, cameraMan);
 
             //Draw GamePad
-            // if(typeof screen.orientation === 'undefined') {
+            if(typeof screen.orientation === 'undefined') {
                 this.gamePad.draw({context: this.context});
-            // }
+            }
 
             requestAnimationFrame(() => {
                 step();
@@ -95,7 +95,9 @@ class World {
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });
-        this.gamePad.bindClick(this.canvas);
+        if(typeof screen.orientation === 'undefined') {
+            this.gamePad.bindClick(this.canvas);
+        }
     }
 
     startMap(mapConfig) {

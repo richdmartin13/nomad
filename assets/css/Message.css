@@ -2,7 +2,7 @@
     position: absolute;
     left: 20vw;
     right: 20vw;
-    top: 30px;
+    bottom: 30px;
     height: fit-content;
     padding: 30px;
     background: var(--dialog-background);
