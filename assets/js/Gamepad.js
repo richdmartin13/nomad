@@ -29,13 +29,13 @@ class GamePad {
             },
             a: {
                 src: '/assets/images/ui/a.png',
-                x: 14, y: 16.75,
+                x: 14.5, y: 16.75,
                 size: buttonSize,
                 keyCode: "KeyE"
             },
             b: {
                 src: '/assets/images/ui/b.png',
-                x: 13, y: 17.75,
+                x: 13.5, y: 17.75,
                 size: buttonSize,
                 keyCode: "KeyQ"
             },
