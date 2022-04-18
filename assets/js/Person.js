@@ -17,8 +17,8 @@ class Person extends GameObject {
         this.sprite.setOffset(this.offset);
 
         this.inventory = {
-            'materials': {},
-            'tools': {},
+            'material': {},
+            'tool': {},
             'food': {}
         }
     }
@@ -110,7 +110,6 @@ class Person extends GameObject {
 
     addInventoryItem({item}) {
         this.inventory[item.type][item.id] = item;
-        console.log(this.inventory);
     }
 
     removeInventoryItem({type, item}) {

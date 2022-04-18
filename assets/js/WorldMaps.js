@@ -1,7 +1,7 @@
 window.WorldMaps = {
     Procedural: {
         id: 'Procedural',
-        mapSize: {x: 128, y: 128},
+        mapSize: {x: 16, y: 16},
         tileSize: {x: 16, y: 16},
         lowerSrc: "",
         upperSrc: "",

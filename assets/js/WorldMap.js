@@ -352,51 +352,15 @@ class WorldMap {
         Object.values(this.gameObjects).forEach(object => object.doBehaviorEvent(this))
     }
 
-    async collectMaterial({type}) {
-        var item;
-
-        switch(true) {
-            case type === 'rock':
-                item = 'stone'
-                break;
-            case type === 'tree':
-                item = 'log'
-                break;
-            default:
-                item = null;
-                break;
-        }
-
-        if(item == null) {
-            return;
-        }
-
-        console.log(item)
-
-        const eventHandler = new WorldEvent({
-            event: {
-                who: this.gameObjects[hero],
-                type: type,
-                item: item
-            },
-            map: this,
-        })
-        await eventHandler.init();
-
-    }
-
     checkForActionCutscene() {
         const hero = this.gameObjects["hero"];
         const nextCoords = utils.nextPosition[hero.posX, hero.posY, hero.direction];
         const match = Object.values(this.gameObjects).find(object => {
             return `${object.posX},${object.posY}` === `${nextCoords.x},${nextCoords.y}`
         });
+        console.log(match.posX, match.posY)
         if (!this.isCutscenePlaying && match && match.talking.length) {
             this.startCutscene(match.talking[0].events)
-        }
-        if (!this.isCutscenePlaying && match && match.hasItem) {
-            this.collectMaterial(match.type);
-            console.log(match.type)
         }
     }
 

@@ -5,7 +5,7 @@ class World {
         this.context = this.canvas.getContext('2d');
         this.map = null;
         this.tileMap = null;
-        this.mapSize = { x: 128, y: 128 }
+        this.mapSize = { x: 16, y: 16 }
         this.tileSize = { x: 16, y: 16 }
         this.smoothing = 60;
         this.terrain = null;
@@ -101,6 +101,7 @@ class World {
             this.map.startCutscene([
                 { who: "hero", type: "idle", direction: "up", time: 10 },
             ])
+            console.log(this.map.gameObjects["hero"].inventory);
             this.menuOpen = !this.menuOpen;
             if (!this.menuOpen) {
                 this.map.startCutscene([
@@ -151,8 +152,11 @@ class World {
 
         this.startGameLoop();
 
-        // this.map.startCutscene([
-        //     { who: "Rich", type: "message", text: "If you find yourself in water, just refresh the page!"},
-        // ])
+        this.map.startCutscene([
+            { who: "hero", type: "collectItem", item: "apple"},
+            { who: "hero", type: "collectItem", item: "wood"},
+            { who: "hero", type: "collectItem", item: "rock"},
+            { who: "hero", type: "collectItem", item: "iron"},
+        ])
     }
 }

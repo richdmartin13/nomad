@@ -82,20 +82,21 @@ class WorldEvent {
         });
     }
 
-    collect(resolve) {
+    collectItem(resolve) {
         const item = new InventoryItem({
-            who: this.event.who,
-            type: this.event.type,
+            who: this.map.gameObjects[this.event.who],
             item: this.event.item
         })
+        item.init();
+        console.log(item)
         const completeHandler = e => {
             if(e.detail.whoId === this.event.who) {
-                document.removeEventListener("CollectItem", completeHandler);
+                document.removeEventListener("collectItem", completeHandler);
                 resolve();
             }
         }
-        document.addEventListener("CollectItem", completeHandler)
-        this.event.who.addInventoryItem({type: item.type, item: item});
+        document.addEventListener("collectItem", completeHandler)
+        this.map.gameObjects[this.event.who].addInventoryItem({item: item});
         resolve();
     }
 
