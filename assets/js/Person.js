@@ -108,8 +108,8 @@ class Person extends GameObject {
         this.sprite.setAnimation("idle-" + this.direction);
     }
 
-    addInventoryItem({type, item}) {
-        this.inventory[type][item.id] = item;
+    addInventoryItem({item}) {
+        this.inventory[item.type][item.id] = item;
         console.log(this.inventory);
     }
 

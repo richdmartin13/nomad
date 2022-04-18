@@ -1,6 +1,6 @@
 class Menu {
     constructor() {
-        this.src = '/assets/images/ui/menu.png';
+        this.src = '/assets/images/ui/menu-light.png';
         this.options = {
 
         }
@@ -24,18 +24,16 @@ class Menu {
         var tileset = new Image();
         tileset.src = this.src;
         var xstart = utils.withGrid(9.5);
-        var ystart = utils.withGrid(6);
+        var ystart = utils.withGrid(9);
 
         var grid = [
             ['tl', 'tc', 'tc', 'tc', 'tc', 'tr'],
             ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
             ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
             ['bl', 'bc', 'bc', 'bc', 'bc', 'br'],
         ]
 
-        for(var x = 0; x < 6; x++ ) {
+        for(var x = 0; x < 4; x++ ) {
             for(var y = 0; y < 6; y++ ) {
                 context.drawImage(
                     tileset, 

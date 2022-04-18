@@ -38,7 +38,7 @@ class WorldMap {
             tree: 8,
             cactus: 6,
             leaves: 20,
-            waterRock: 2,
+            waterRock: 4,
             waves: 12
         }
     }
@@ -142,9 +142,7 @@ class WorldMap {
                         break;
                 }
 
-                var render = true;
-
-                if(render && this.tilesetLoaded) {
+                if(this.tilesetLoaded) {
                     ctx.drawImage(
                         this.tileset,
                         sprite.x, sprite.y,
@@ -179,7 +177,7 @@ class WorldMap {
                 var placeWaves = false;
 
                 switch (true) {
-                    case value < 0.3 || value == null:
+                    case value < 0.3:
                         if(spawn > 100 - this.spawnRates.waterRock) {
                             var tex = Math.floor(Math.random() * 2);
                             source = `/assets/images/world/waterrock${tex}.png`;
@@ -234,7 +232,7 @@ class WorldMap {
                             placeLeaves = true;
                         }
                         break;
-                    case value < 0.1 || value == null: 
+                    case value < 0.1: 
                         //waves spawn code
                         if(spawn > 100 - this.spawnRates.waves) {
                             var tex = Math.floor(Math.random() * 3);
