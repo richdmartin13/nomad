@@ -41,6 +41,16 @@ class WorldMap {
             waterRock: 4,
             waves: 12
         }
+
+        this.init();
+    }
+
+    init() {
+        this.tileset = new Image();
+        this.tileset.src = this.tilesetURL;
+        this.tileset.onload = () => {
+            this.tilesetLoaded = true;
+        }
     }
 
     drawLower(context, cameraMan) {
@@ -77,8 +87,6 @@ class WorldMap {
     drawMap(map, ctx, mapSize, tileSize, cameraMan) {
         if (ctx === null) { return; }
 
-        this.tileset = new Image();
-
         var sprites = {
             sand: { sprite: { x: 0, y: 0, w: 16, h: 16 } },
             grass: { sprite: { x: 16, y: 0, w: 16, h: 16 } },
@@ -93,10 +101,6 @@ class WorldMap {
         }
         var sprite = null;
 
-        this.tileset.src = this.tilesetURL;
-        this.tileset.onload = () => {
-            this.tilesetLoaded = true;
-        }
 
         for (var y = 0; y < mapSize.y; y++) {
             for (var x = 0; x < mapSize.x; x++) {
