@@ -88,7 +88,6 @@ class WorldEvent {
             item: this.event.item
         })
         item.init();
-        console.log(item)
         const completeHandler = e => {
             if(e.detail.whoId === this.event.who) {
                 document.removeEventListener("collectItem", completeHandler);
@@ -97,6 +96,7 @@ class WorldEvent {
         }
         document.addEventListener("collectItem", completeHandler)
         this.map.gameObjects[this.event.who].addInventoryItem({item: item});
+        this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
         resolve();
     }
 

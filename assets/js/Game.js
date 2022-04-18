@@ -5,7 +5,7 @@ class World {
         this.context = this.canvas.getContext('2d');
         this.map = null;
         this.tileMap = null;
-        this.mapSize = { x: 16, y: 16 }
+        this.mapSize = { x: 64, y: 64 }
         this.tileSize = { x: 16, y: 16 }
         this.smoothing = 60;
         this.terrain = null;
@@ -152,11 +152,11 @@ class World {
 
         this.startGameLoop();
 
-        this.map.startCutscene([
-            { who: "hero", type: "collectItem", item: "apple"},
-            { who: "hero", type: "collectItem", item: "wood"},
-            { who: "hero", type: "collectItem", item: "rock"},
-            { who: "hero", type: "collectItem", item: "iron"},
-        ])
+        // this.map.startCutscene([
+        //     { who: "hero", type: "collectItem", item: "apple"},
+        //     { who: "hero", type: "collectItem", item: "wood"},
+        //     { who: "hero", type: "collectItem", item: "rock"},
+        //     { who: "hero", type: "collectItem", item: "iron"},
+        // ])
     }
 }

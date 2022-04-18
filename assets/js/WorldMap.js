@@ -279,6 +279,15 @@ class WorldMap {
         }
     }
 
+    removeGameObject(x, y) {
+
+        const match = Object.values(this.gameObjects).find(object => {
+            return `${object.posX},${object.posY}` === `${x},${y}`
+        });
+        this.remWall(this.gameObjects[match.id].posX, this.gameObjects[match.id].posY);
+        delete this.gameObjects[match.id];
+    }
+
     resetTerrainObjects() {
         Object.keys(this.gameObjects).forEach(key => {
             if(key.includes(',')) {
@@ -350,18 +359,6 @@ class WorldMap {
         this.isCutscenePlaying = false;
 
         Object.values(this.gameObjects).forEach(object => object.doBehaviorEvent(this))
-    }
-
-    checkForActionCutscene() {
-        const hero = this.gameObjects["hero"];
-        const nextCoords = utils.nextPosition[hero.posX, hero.posY, hero.direction];
-        const match = Object.values(this.gameObjects).find(object => {
-            return `${object.posX},${object.posY}` === `${nextCoords.x},${nextCoords.y}`
-        });
-        console.log(match.posX, match.posY)
-        if (!this.isCutscenePlaying && match && match.talking.length) {
-            this.startCutscene(match.talking[0].events)
-        }
     }
 
     checkForFootstepCutscene() {
