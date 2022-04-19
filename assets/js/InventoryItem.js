@@ -22,7 +22,7 @@ class InventoryItem {
 
     getType() {
         switch (true) {
-            case this.item == 'wood':
+            case this.item == 'log':
                 return 'material';
             case this.item == 'apple':
                 return 'food';
@@ -35,7 +35,7 @@ class InventoryItem {
 
     getTexture() {
         switch (true) {
-            case this.item == 'wood':
+            case this.item == 'log':
                 return '/assets/images/items/wood.png';
             case this.item == 'apple':
                 return '/assets/images/items/apple.png';

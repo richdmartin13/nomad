@@ -1,8 +1,8 @@
 class InventoryHUD {
     constructor() {
         this.items = {
-            wood: {
-                item: new InventoryItem({item: 'wood'}),
+            log: {
+                item: new InventoryItem({item: 'log'}),
                 pos: { x: 0, y: 0 }
             },
             rock: {

@@ -23,7 +23,7 @@ class TerrainObject extends GameObject {
         if (this.hasItem) {
             switch (true) {
                 case this.type == 'tree':
-                    this.item = 'wood';
+                    this.item = 'log';
                     break;
                 case this.type == 'appleTree':
                     this.item = 'apple';

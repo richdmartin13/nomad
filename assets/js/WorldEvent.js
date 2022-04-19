@@ -101,6 +101,9 @@ class WorldEvent {
         }
         setTimeout(() => {
             this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
+            this.map.startCutscene([
+                { type: "message", text: `You found ${this.event.count} ${this.event.item}${this.event.count > 1 ? 's!' : '!'}`}
+            ])
         }, 200)
         resolve();
     }

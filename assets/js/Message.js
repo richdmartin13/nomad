@@ -1,6 +1,6 @@
 class Message {
     constructor (config) {
-        this.who = config.who.toUpperCase();
+        this.who = config.who != null ? `${config.who.toUpperCase()}: ` : '';
         this.text = config.text;
         this.onComplete = config.onComplete;
         this.element = null;
@@ -10,7 +10,7 @@ class Message {
         this.element = document.createElement("div");
         this.element.classList.add("Message");
         this.element.innerHTML = (`
-        <p class="Message_p">${this.who}: </p>
+        <p class="Message_p">${this.who}</p>
         <button class="Message_button">Next</button>
         `)
 
