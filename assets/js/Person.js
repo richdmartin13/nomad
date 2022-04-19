@@ -148,7 +148,18 @@ class Person extends GameObject {
                 })
             }
         })
-
         return items;
+    }
+
+    getItemCount(item) {
+        var items = this.getInventoryItemCount();
+
+        Object.values(items).forEach(object => {
+            if(object.count > 0 && object.item == item) {
+                return object.count;
+            } else {
+                return 0;
+            }
+        })
     }
 }

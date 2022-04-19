@@ -83,9 +83,6 @@ class GamePad {
 
     draw({ context }) {
         Object.keys(this.buttonObjects).forEach(key => {
-            var x = this.buttonObjects[key].x + utils.withGrid(12);
-            var y = this.buttonObjects[key].y + utils.withGrid(16);
-
             context.drawImage(
                 this.buttonObjects[key].image,
                 utils.withGrid(this.buttonObjects[key].x),

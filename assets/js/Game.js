@@ -11,6 +11,7 @@ class World {
         this.terrain = null;
         this.mapList = {};
         this.gamePad = null;
+        this.inventoryHUD = null;
         this.menu = null;
         this.menuOpen = false;
     }
@@ -56,8 +57,11 @@ class World {
             //Draw GamePad
             this.gamePad.draw({ context: this.context });
 
+
             if (this.menuOpen) {
                 this.menu.draw({ context: this.context });
+                //Draw Inventory HUD
+            this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
             }
 
             requestAnimationFrame(() => {
@@ -147,6 +151,8 @@ class World {
 
         this.directionInput = new DirecitonInput();
         this.directionInput.init();
+
+        this.inventoryHUD = new InventoryHUD();
 
         this.menu = new Menu();
 
