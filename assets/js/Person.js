@@ -62,23 +62,6 @@ class Person extends GameObject {
             this.updateSprite(state);
         };
 
-        if(behavior.type == "run") {
-
-            // console.log(this.posX/16, this.posY/16)
-            //stop if space not free
-            if(state.map.isSpaceTaken(this.posX, this.posY, this.direction)) {
-                behavior.retry && setTimeout(() => {
-                    this.startBehavior(state, behavior)
-                }, 125)
-                return;
-            }
-
-            //ready to walk
-            state.map.moveWall(this.posX, this.posY, this.direction);
-            this.movingProgressRemaining = 16;
-            this.updateSprite(state);
-        };
-
         if(behavior.type == "idle") {
             this.isIdle = true
             setTimeout(() => {

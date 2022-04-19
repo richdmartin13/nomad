@@ -1,52 +1,42 @@
 class Menu {
-    constructor() {
-        this.src = '/assets/images/ui/menu-light.png';
+    constructor({debug}) {
+        this.background = new Image();
+        this.background.src = '/assets/images/ui/menu.png';
+        this.button = new Image();
+        this.button.src = '/assets/images/ui/button.png';
         this.options = {
-
+            refresh: {
+                name: "Regenerate",
+                action: () => { location.reload() },
+                x: utils.withGrid(10.5),
+                y: utils.withGrid(7)
+            },
+            debug: {
+                name: "Debug Mode",
+                action: debug,
+                x: utils.withGrid(10.5),
+                y: utils.withGrid(8)
+            }
         }
-
-        this.sprites = {
-            'tl': { sprite: { x: 0, y: 0, w: 16, h: 16} },
-            'tc': { sprite: { x: 16, y: 0, w: 16, h: 16} },
-            'tr': { sprite: { x: 32, y: 0, w: 16, h: 16} },
-            'ml': { sprite: { x: 0, y: 16, w: 16, h: 16} },
-            'mc': { sprite: { x: 16, y: 16, w: 16, h: 16} },
-            'mr': { sprite: { x: 32, y: 16, w: 16, h: 16} },
-            'bl': { sprite: { x: 0, y: 32, w: 16, h: 16} },
-            'bc': { sprite: { x: 16, y: 32, w: 16, h: 16} },
-            'br': { sprite: { x: 32, y: 32, w: 16, h: 16} },
-        }
-        this.sprite = null;
     }
 
-    draw({context}) {
-        if (context === null) { return; }
-        var tileset = new Image();
-        tileset.src = this.src;
-        var xstart = utils.withGrid(9.5);
-        var ystart = utils.withGrid(9);
+    draw({context, hero}) {
+        context.drawImage(
+            this.background,
+            utils.withGrid(9.5), utils.withGrid(6),
+            96, 112
+        )
 
-        var grid = [
-            ['tl', 'tc', 'tc', 'tc', 'tc', 'tr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['ml', 'mc', 'mc', 'mc', 'mc', 'mr'],
-            ['bl', 'bc', 'bc', 'bc', 'bc', 'br'],
-        ]
+        Object.values(this.options).forEach(object => {
+            var x = object.x;
+            var y = object.y;
 
-        for(var x = 0; x < 4; x++ ) {
-            for(var y = 0; y < 6; y++ ) {
-                context.drawImage(
-                    tileset, 
-                    this.sprites[grid[x][y]].sprite.x,
-                    this.sprites[grid[x][y]].sprite.y,
-                    16, 16,
-                    xstart, ystart,
-                    16, 16
-                )
-                xstart += 16;
-            }
-            xstart = utils.withGrid(9.5);
-            ystart +=16;
-        }
+            context.drawImage(this.button, x, y);
+
+            context.font = '10px sans-serif';
+            context.fillStyle='#FFF';
+            context.fillText(object.name, x + 3, y+11);
+        })
+        
     }
 }

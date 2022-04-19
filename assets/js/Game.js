@@ -14,6 +14,7 @@ class World {
         this.inventoryHUD = null;
         this.menu = null;
         this.menuOpen = false;
+        this.inventoryOpen = false;
         this.FPS = {
             current: 0,
             frameCount: 0,
@@ -68,11 +69,14 @@ class World {
             //Draw GamePad
             this.gamePad.draw({ context: this.context });
 
-            //Open Menu
-            if (this.menuOpen) {
-                this.menu.draw({ context: this.context });
+            if (this.inventoryOpen) {
                 //Draw Inventory HUD
                 this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
+            }
+
+            if (this.menuOpen) {
+                //Draw Menu
+                this.menu.draw({ context: this.context });
             }
 
             if (this.debug) {
@@ -143,15 +147,24 @@ class World {
         })
         //GamePad Option, Keyboard 3 for Reload || (?)
         new KeyPressListener('Digit3', () => {
-            location.reload();
+                this.map.startCutscene([
+                    { who: "hero", type: "idle", direction: "up", time: 10 },
+                ])
+                this.menuOpen = !this.menuOpen;
+                if (!this.menuOpen) {
+                    this.map.startCutscene([
+                        { who: "hero", type: "idle", direction: "down", time: 10 },
+                    ])
+                    location.reload();
+                }
         })
         //GamePad Home, Keyboard T for Inventory, (menu, reload?)
         new KeyPressListener('KeyR', () => {
             this.map.startCutscene([
                 { who: "hero", type: "idle", direction: "up", time: 10 },
             ])
-            this.menuOpen = !this.menuOpen;
-            if (!this.menuOpen) {
+            this.inventoryOpen = !this.inventoryOpen;
+            if (!this.inventoryOpen) {
                 this.map.startCutscene([
                     { who: "hero", type: "idle", direction: "down", time: 10 },
                 ])
@@ -168,6 +181,7 @@ class World {
         if (this.mapList[mapConfig.id] == null) {
             //If not, create it and add it to the cache
             this.map = new WorldMap(mapConfig);
+            this.map.mapSize = this.mapSize;
             if (!this.map.custom && this.map.terrain == null) {
                 this.map.drawWorldBorder(this.mapSize);
                 this.map.terrain = this.map.buildMap(this.mapSize, this.smoothing)
@@ -198,7 +212,7 @@ class World {
 
         this.inventoryHUD = new InventoryHUD();
 
-        this.menu = new Menu();
+        this.menu = new Menu({debug: () => this.debug = !this.debug});
 
         this.startGameLoop();
 

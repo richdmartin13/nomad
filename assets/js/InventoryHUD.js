@@ -19,13 +19,22 @@ class InventoryHUD {
             },
         };
 
+        this.background = new Image();
+        this.background.src = '/assets/images/ui/inventory.png';
+
         this.size = 8;
     }
 
     draw({ context, hero }) {
+        context.drawImage(
+            this.background,
+            utils.withGrid(9.5), utils.withGrid(6),
+            96, 112
+        )
+
         Object.keys(this.items).forEach(key => {
-            var x = this.items[key].pos.x + utils.withGrid(10);
-            var y = this.items[key].pos.y + utils.withGrid(12);
+            var x = this.items[key].pos.x + utils.withGrid(11);
+            var y = this.items[key].pos.y + utils.withGrid(9.5);
             var itemCount = 0;
 
             context.drawImage(
