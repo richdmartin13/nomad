@@ -38,7 +38,7 @@ const utils = {
             case width <= 720:
                 return 3.8;
             case width > 720 && width <= 1024:
-                return 3;
+                return 4.2;
             case width > 1024:
             default:
                 return 4.8;
