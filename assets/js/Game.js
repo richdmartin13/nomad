@@ -14,6 +14,13 @@ class World {
         this.inventoryHUD = null;
         this.menu = null;
         this.menuOpen = false;
+        this.FPS = {
+            current: 0,
+            frameCount: 0,
+            framesLastSecond: 0,
+            compensation: 1
+        }
+        this.debug = false;
     }
 
     startGameLoop() {
@@ -22,6 +29,9 @@ class World {
             this.canvas.height = this.canvas.width;
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
+            //Track Framerate & Compensate animations
+            this.frameRate();
+
             //Establish Camera
             const cameraMan = this.map.gameObjects.hero;
 
@@ -29,7 +39,8 @@ class World {
             Object.values(this.map.gameObjects).forEach(object => {
                 object.update({
                     arrow: this.directionInput.direction,
-                    map: this.map
+                    map: this.map,
+                    frameLimitCompensation: this.FPS.compensation
                 });
             })
 
@@ -57,11 +68,17 @@ class World {
             //Draw GamePad
             this.gamePad.draw({ context: this.context });
 
-
+            //Open Menu
             if (this.menuOpen) {
                 this.menu.draw({ context: this.context });
                 //Draw Inventory HUD
-            this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
+                this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
+            }
+
+            if (this.debug) {
+                //Draw FrameRate
+                this.drawFrameRate();
+                this.getPos();
             }
 
             requestAnimationFrame(() => {
@@ -69,6 +86,40 @@ class World {
             })
         }
         step();
+    }
+
+    frameRate() {
+        var sec = Math.floor(Date.now() / 1000);
+        if (sec != this.FPS.currentSecond) {
+            this.FPS.currentSecond = sec;
+            this.FPS.framesLastSecond = this.FPS.frameCount;
+            this.FPS.frameCount = 1;
+            if(this.FPS.framesLastSecond < 45 ) {
+                this.FPS.compensation = 2;
+            } else if(this.FPS.framesLastSecond > 45 && this.FPS.framesLastSecond < 90 ) {
+                this.FPS.compensation = 1;
+            } else {
+                this.FPS.compensation = 0.5;
+            }
+        } else {
+            this.FPS.frameCount++;
+        }
+    }
+
+    drawFrameRate() {
+        this.context.fillStyle = '#FFF';
+        this.context.font = '8px sans-serif'
+        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(9.5), utils.withGrid(6.2));
+        this.context.font = '6px sans-serif'
+        this.context.fillText(`x${this.FPS.compensation}`, utils.withGrid(9.5), utils.withGrid(6.6));
+    }
+
+    getPos() {
+        this.context.fillStyle = '#FFF';
+        this.context.font = '8px sans-serif'
+        this.context.fillText(`( ${Math.floor(this.map.gameObjects['hero'].posX/16)},${Math.floor(this.map.gameObjects['hero'].posY/16)} )`, utils.withGrid(13.75), utils.withGrid(6.2));
+        this.context.font = '6px sans-serif'
+        this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.75), utils.withGrid(6.6));
     }
 
     bindHeroPositionCheck() {
@@ -94,18 +145,17 @@ class World {
         })
         //GamePad Select, Keyboard 1 for ?
         new KeyPressListener('Digit1', () => {
-
+            this.debug = !this.debug;
         })
         //GamePad Option, Keyboard 3 for Reload || (?)
         new KeyPressListener('Digit3', () => {
             location.reload();
         })
         //GamePad Home, Keyboard T for Inventory, (menu, reload?)
-        new KeyPressListener('KeyT', () => {
+        new KeyPressListener('KeyR', () => {
             this.map.startCutscene([
                 { who: "hero", type: "idle", direction: "up", time: 10 },
             ])
-            console.log(this.map.gameObjects["hero"].inventory);
             this.menuOpen = !this.menuOpen;
             if (!this.menuOpen) {
                 this.map.startCutscene([

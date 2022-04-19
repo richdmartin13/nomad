@@ -55,13 +55,13 @@ class GamePad {
                 src: '/assets/images/ui/startLeft.png',
                 x: 11.75, y: 16.5,
                 size: buttonSize,
-                keyCode: "KeyT"
+                keyCode: "KeyR"
             },
             startRight: {
                 src: '/assets/images/ui/startRight.png',
                 x: 12.25, y: 16.5,
                 size: buttonSize,
-                keyCode: "KeyT"
+                keyCode: "KeyR"
             }
         }
         this.buttonObjects = [];

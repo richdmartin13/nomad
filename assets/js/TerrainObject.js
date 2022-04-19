@@ -5,8 +5,8 @@ class TerrainObject extends GameObject {
         this.type = config.type;
 
         this.callback = config.callback || null;
-        this.hasItem = Math.random() * 100 > 50;
-        // this.hasItem = true;
+        // this.hasItem = Math.random() * 100 > 50;
+        this.hasItem = true;
         this.item = null;
 
         this.offset = { x: 0, y: 0 }
@@ -29,7 +29,7 @@ class TerrainObject extends GameObject {
                     this.item = 'apple';
                     break;
                 case this.type == 'rock':
-                    this.item = Math.random() * 100 > 70 ? 'iron' : 'rock';
+                    this.item = Math.random() * 100 > 80 ? 'iron' : 'rock';
                     break;
             }
             if(this.item == null) {

@@ -26,6 +26,7 @@ class Person extends GameObject {
     }
 
     update(state) {
+        this.sprite.animationFrameLimit = 8/state.frameLimitCompensation;
         if (this.movingProgressRemaining > 0) {
             this.updatePosition();
         } else {
@@ -135,8 +136,6 @@ class Person extends GameObject {
         Object.keys(this.inventory).forEach(type => {
             if(Object.keys(this.inventory[type]).length > 0) {
                 Object.keys(this.inventory[type]).forEach(key => {
-                    // console.log(this.inventory[type][key].item);
-                    // console.log(items[this.inventory[type][key].item]);
                     if(items[this.inventory[type][key].item] == null) {
                         items[this.inventory[type][key].item] = {
                             item: this.inventory[type][key].item,

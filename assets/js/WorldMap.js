@@ -9,6 +9,7 @@ class WorldMap {
         this.custom = config.custom;
         this.mapSize = config.mapSize;
         this.tileSize = config.tileSize;
+        this.fpsCompensation = config.fpsCompensation || 1;
 
         this.lower = new Image();
         this.lower.src = config.lowerSrc;
@@ -101,7 +102,6 @@ class WorldMap {
             waterR: { sprite: { x: 64, y: 16, w: 16, h: 16 }},
         }
         var sprite = null;
-
 
         for (var y = 0; y < mapSize.y; y++) {
             for (var x = 0; x < mapSize.x; x++) {
@@ -203,7 +203,7 @@ class WorldMap {
                         if(aspawn > 100 - this.spawnRates.appleTree) {
                             source = '/assets/images/world/bush1.png'
                             placeObject = true;
-                            type = 'cherryTree';
+                            type = 'appleTree';
                         }
                     case value > 0.4 && value < 0.8:
                         //tree spawn code
@@ -346,6 +346,7 @@ class WorldMap {
         Object.keys(this.gameObjects).forEach(key => {
             let object = this.gameObjects[key];
             object.id = key;
+            object.sprite.animationFrameLimit = 8/this.fpsCompensation;
 
             if (`${object.posX},${object.posY}` == '0,0') {
                 var position = this.getRandomSpawn();

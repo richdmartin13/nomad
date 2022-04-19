@@ -99,7 +99,9 @@ class WorldEvent {
             item.id = `${item.id}${x}`;
             this.map.gameObjects[this.event.who].addInventoryItem({item: item});
         }
-        this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
+        setTimeout(() => {
+            this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
+        }, 200)
         resolve();
     }
 
