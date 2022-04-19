@@ -95,7 +95,10 @@ class WorldEvent {
             }
         }
         document.addEventListener("collectItem", completeHandler)
-        this.map.gameObjects[this.event.who].addInventoryItem({item: item});
+        for(var x = 0; x < this.event.count; x++ ) {
+            item.id = `${item.id}${x}`;
+            this.map.gameObjects[this.event.who].addInventoryItem({item: item});
+        }
         this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
         resolve();
     }

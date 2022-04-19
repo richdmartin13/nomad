@@ -36,6 +36,7 @@ class WorldMap {
         this.spawnRates = {
             rock: 12,
             tree: 8,
+            appleTree: 4,
             cactus: 6,
             leaves: 20,
             waterRock: 4,
@@ -197,10 +198,18 @@ class WorldMap {
                             placeObject = true;
                             type = 'rock';
                         }
+                    case value > 0.5: 
+                        var aspawn = Math.floor(Math.random() * 100);
+                        if(aspawn > 100 - this.spawnRates.appleTree) {
+                            source = '/assets/images/world/bush1.png'
+                            placeObject = true;
+                            type = 'cherryTree';
+                        }
                     case value > 0.4 && value < 0.8:
                         //tree spawn code
                         if (spawn > 100 - this.spawnRates.tree) {
-                            var tex = Math.floor(Math.random() * 2);
+                            // var tex = Math.floor(Math.random() * 2);
+                            var tex = 0;
                             source = `/assets/images/world/bush${tex}.png`;
                             placeObject = true;
                             type = 'tree';

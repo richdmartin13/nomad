@@ -23,7 +23,10 @@ class TerrainObject extends GameObject {
         if (this.hasItem) {
             switch (true) {
                 case this.type == 'tree':
-                    this.item = Math.random() * 100 > 70 ? 'apple' : 'wood';
+                    this.item = 'wood';
+                    break;
+                case this.type == 'appleTree':
+                    this.item = 'apple';
                     break;
                 case this.type == 'rock':
                     this.item = Math.random() * 100 > 70 ? 'iron' : 'rock';
@@ -32,8 +35,10 @@ class TerrainObject extends GameObject {
             if(this.item == null) {
                 this.hasItem = false;
             } else {
+                var count = Math.floor(Math.random() * 4) + 1;
+
                 this.talking[0].events.push(
-                    {who: "hero", type: "collectItem", item: this.item, pos: {x: this.posX, y: this.posY }}
+                    {who: "hero", type: "collectItem", item: this.item, pos: {x: this.posX, y: this.posY }, count: count}
                 )
             }
         }

@@ -20,7 +20,9 @@ class Person extends GameObject {
             'material': {},
             'tool': {},
             'food': {}
-        }
+        },
+
+        this.inventoryItemCount = null;
     }
 
     update(state) {
@@ -110,6 +112,7 @@ class Person extends GameObject {
 
     addInventoryItem({item}) {
         this.inventory[item.type][item.id] = item;
+        this.inventoryItemCount = this.getInventoryItemCount();
     }
 
     removeInventoryItem({type, item}) {
@@ -124,5 +127,28 @@ class Person extends GameObject {
         } else {
             console.log('no match');
         }
+    }
+
+    getInventoryItemCount() {
+        var items = {};
+        
+        Object.keys(this.inventory).forEach(type => {
+            if(Object.keys(this.inventory[type]).length > 0) {
+                Object.keys(this.inventory[type]).forEach(key => {
+                    // console.log(this.inventory[type][key].item);
+                    // console.log(items[this.inventory[type][key].item]);
+                    if(items[this.inventory[type][key].item] == null) {
+                        items[this.inventory[type][key].item] = {
+                            item: this.inventory[type][key].item,
+                            count: 1 
+                        }
+                    } else {
+                        items[this.inventory[type][key].item].count += 1;
+                    }
+                })
+            }
+        })
+
+        return items;
     }
 }
