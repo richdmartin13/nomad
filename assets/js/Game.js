@@ -94,13 +94,7 @@ class World {
             this.FPS.currentSecond = sec;
             this.FPS.framesLastSecond = this.FPS.frameCount;
             this.FPS.frameCount = 1;
-            if(this.FPS.framesLastSecond < 45 ) {
-                this.FPS.compensation = 2;
-            } else if(this.FPS.framesLastSecond > 45 && this.FPS.framesLastSecond < 90 ) {
-                this.FPS.compensation = 1;
-            } else {
-                this.FPS.compensation = 0.5;
-            }
+            this.FPS.compensation = 60/this.FPS.framesLastSecond;
         } else {
             this.FPS.frameCount++;
         }
