@@ -117,18 +117,18 @@ class World {
 
     drawFrameRate() {
         this.context.fillStyle = '#FFF';
-        this.context.font = '8px sans-serif'
-        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(9.5), utils.withGrid(6.2));
-        this.context.font = '6px sans-serif'
-        this.context.fillText(`x${this.FPS.compensation}`, utils.withGrid(9.5), utils.withGrid(6.6));
+        this.context.font = '6px "Press Start 2P"'
+        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(8.5), utils.withGrid(5));
+        this.context.font = '5px "Press Start 2P"'
+        this.context.fillText(`x${this.FPS.compensation}`, utils.withGrid(8.5), utils.withGrid(5.4));
     }
 
     getPos() {
         this.context.fillStyle = '#FFF';
-        this.context.font = '8px sans-serif'
-        this.context.fillText(`( ${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)} )`, utils.withGrid(13.75), utils.withGrid(6.2));
-        this.context.font = '6px sans-serif'
-        this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.75), utils.withGrid(6.6));
+        this.context.font = '6px "Press Start 2P"'
+        this.context.fillText(`( ${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)} )`, utils.withGrid(13.25), utils.withGrid(5));
+        this.context.font = '5px "Press Start 2P"'
+        this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.25), utils.withGrid(5.4));
     }
 
     bindHeroPositionCheck() {
@@ -235,7 +235,7 @@ class World {
             debug: () => this.toggleDebug(), 
             isOpen: this.menuOpen,
             closeMenu: () => this.closeMenu(),
-            gamepad: () => this.toggleGamePad()
+            gamepad: () => this.toggleGamePad(),
          });
         this.menu.init(this.canvas.getBoundingClientRect());
         this.map.menu = this.menu;

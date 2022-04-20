@@ -6,6 +6,7 @@ class Menu {
         this.button.src = '/assets/images/ui/button.png';
         this.rect = null;
         this.isOpen = isOpen;
+        this.showGamePad = true;
         this.options = {
             refresh: {
                 name: "Restart Map",
@@ -22,7 +23,7 @@ class Menu {
                 containsPoint: (x, y, key) => this.containsPoint(x, y, key)
             },
             gamepad: {
-                name: "Gamepad I/0",
+                name: "Show Gamepad",
                 action: gamepad,
                 x: utils.withGrid(10.5),
                 y: utils.withGrid(9),
@@ -47,7 +48,7 @@ class Menu {
         }
     }
 
-    draw({context, hero}) {
+    draw({context}) {
         context.drawImage(
             this.background,
             utils.withGrid(9.5), utils.withGrid(6),
@@ -60,7 +61,7 @@ class Menu {
 
             context.drawImage(this.button, x, y);
 
-            context.font = '8px sans-serif';
+            context.font = '5px "Press Start 2P"';
             context.fillStyle='#FFF';
             context.fillText(object.name, x + 3, y+11);
         })
