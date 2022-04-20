@@ -15,6 +15,7 @@ class World {
         this.menu = null;
         this.menuOpen = false;
         this.inventoryOpen = false;
+        this.showGamePad = true;
         this.FPS = {
             current: 0,
             frameCount: 0,
@@ -67,7 +68,9 @@ class World {
             this.map.drawUpper(this.context, cameraMan);
 
             //Draw GamePad
-            this.gamePad.draw({ context: this.context });
+            if(this.showGamePad) {
+                this.gamePad.draw({ context: this.context });
+            }
 
             if (this.inventoryOpen) {
                 //Draw Inventory HUD
@@ -94,6 +97,10 @@ class World {
 
     toggleDebug() {
         this.debug = !this.debug;
+    }
+
+    toggleGamePad() {
+        this.showGamePad = !this.showGamePad;
     }
 
     frameRate() {
@@ -227,7 +234,8 @@ class World {
         this.menu = new Menu({ 
             debug: () => this.toggleDebug(), 
             isOpen: this.menuOpen,
-            closeMenu: () => this.closeMenu()
+            closeMenu: () => this.closeMenu(),
+            gamepad: () => this.toggleGamePad()
          });
         this.menu.init(this.canvas.getBoundingClientRect());
         this.map.menu = this.menu;

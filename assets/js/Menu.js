@@ -1,5 +1,5 @@
 class Menu {
-    constructor({debug, closeMenu, isOpen}) {
+    constructor({debug, closeMenu, gamepad, isOpen}) {
         this.background = new Image();
         this.background.src = '/assets/images/ui/menu.png';
         this.button = new Image();
@@ -19,6 +19,13 @@ class Menu {
                 action: debug,
                 x: utils.withGrid(10.5),
                 y: utils.withGrid(8),
+                containsPoint: (x, y, key) => this.containsPoint(x, y, key)
+            },
+            gamepad: {
+                name: "Gamepad I/0",
+                action: gamepad,
+                x: utils.withGrid(10.5),
+                y: utils.withGrid(9),
                 containsPoint: (x, y, key) => this.containsPoint(x, y, key)
             },
             close: {
@@ -53,7 +60,7 @@ class Menu {
 
             context.drawImage(this.button, x, y);
 
-            context.font = '10px sans-serif';
+            context.font = '8px sans-serif';
             context.fillStyle='#FFF';
             context.fillText(object.name, x + 3, y+11);
         })
@@ -89,7 +96,6 @@ class Menu {
                 if (x < this.options[key].x/16 - 0.1 || x > this.options[key].x/16 + 5.1 || y < this.options[key].y/16 - 0.1 || y > this.options[key].y/16 + 1) {
                     active = null;
                 } else {
-                    console.log(`inside key ${key}`)
                     active = key;
                 }
             }
