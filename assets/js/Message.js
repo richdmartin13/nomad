@@ -11,7 +11,7 @@ class Message {
         this.element.classList.add("Message");
         this.element.innerHTML = (`
         <p class="Message_p">${this.who}</p>
-        <button class="Message_button">Next</button>
+        <button class="Message_button">&nbsp;</button>
         `)
 
         this.revealingText = new RevealingText({

@@ -3,8 +3,8 @@
     --dialog-background: rgba(88, 111, 124, 0.8);
 
     --menu-background: #2F4550;
-    --menu-border-color: #B8DBD9;
-    --menu-font-color: #F4F4F9;
+    --menu-border-color: hsl(177, 33%, 79%);
+    --menu-font-color: #101010;
     --menu-selected-background: #586F7C;
 }
 

@@ -35,9 +35,10 @@ window.WorldMaps = {
                     {
                         events: [
                             { who: "nomad2", type: "idle", direction: 'left', time: 10 },
-                            { who: "Rich", type: "message", text: "Ahh, you want to go back to the office?"},
-                            { who: "Rich", type: "message", text: "That makes sense. There's not a lot to do here."},
-                            { who: "Rich", type: "message", text: "Nonetheless, I'm glad you stopped by. I look forward to seeing you again!"},
+                            { who: "Rich", type: "message", text: "For now, I can lead ya to the office."},
+                            { who: "Rich", type: "message", text: "There's more to do here, but that's water over the bridge."},
+                            { who: "Rich", type: "message", text: "Either way, I'm glad you stopped by."},
+                            { who: "Rich", type: "message", text: "Hope to see ya again!"},
                             { type: 'changeMap', map: 'Office'}
                         ]
                     }
