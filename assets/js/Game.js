@@ -119,15 +119,15 @@ class World {
     drawFrameRate() {
         this.context.fillStyle = '#FFF';
         this.context.font = '6px "Press Start 2P"'
-        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(8.5), utils.withGrid(6.5));
+        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(9.25), utils.withGrid(6.5));
         this.context.font = '5px "Press Start 2P"'
-        this.context.fillText(`x${this.FPS.compensation}`, utils.withGrid(8.5), utils.withGrid(6.9));
+        this.context.fillText(`x${this.FPS.compensation}`, utils.withGrid(9.25), utils.withGrid(6.9));
     }
 
     getPos() {
         this.context.fillStyle = '#FFF';
         this.context.font = '6px "Press Start 2P"'
-        this.context.fillText(`( ${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)} )`, utils.withGrid(13.25), utils.withGrid(6.5));
+        this.context.fillText(`(${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)})`, utils.withGrid(13.25), utils.withGrid(6.5));
         this.context.font = '5px "Press Start 2P"'
         this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.25), utils.withGrid(6.9));
     }
