@@ -108,6 +108,15 @@ class WorldEvent {
         resolve();
     }
 
+    openMenu() {        
+        this.map.menu.bindClick(true);
+    }
+
+    closeMenu(resolve) {
+        this.map.menu.bindClick(false);
+        resolve();
+    }
+
     init() {
         return new Promise(resolve => {
             this[this.event.type](resolve)

@@ -74,7 +74,7 @@ class World {
                 this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
             }
 
-            if (this.menuOpen) {
+            if (this.menu.isOpen) {
                 //Draw Menu
                 this.menu.draw({ context: this.context });
             }
@@ -92,13 +92,17 @@ class World {
         step();
     }
 
+    toggleDebug() {
+        this.debug = !this.debug;
+    }
+
     frameRate() {
         var sec = Math.floor(Date.now() / 1000);
         if (sec != this.FPS.currentSecond) {
             this.FPS.currentSecond = sec;
             this.FPS.framesLastSecond = this.FPS.frameCount;
             this.FPS.frameCount = 1;
-            this.FPS.compensation = 60/this.FPS.framesLastSecond;
+            this.FPS.compensation = 60 / this.FPS.framesLastSecond;
         } else {
             this.FPS.frameCount++;
         }
@@ -115,7 +119,7 @@ class World {
     getPos() {
         this.context.fillStyle = '#FFF';
         this.context.font = '8px sans-serif'
-        this.context.fillText(`( ${Math.floor(this.map.gameObjects['hero'].posX/16)},${Math.floor(this.map.gameObjects['hero'].posY/16)} )`, utils.withGrid(13.75), utils.withGrid(6.2));
+        this.context.fillText(`( ${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)} )`, utils.withGrid(13.75), utils.withGrid(6.2));
         this.context.font = '6px sans-serif'
         this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.75), utils.withGrid(6.6));
     }
@@ -126,6 +130,13 @@ class World {
                 this.map.checkForFootstepCutscene();
             }
         })
+    }
+
+    closeMenu() {
+        this.map.startCutscene([
+            {type: 'closeMenu', menu: this.map.menu},
+            { who: "hero", type: "idle", direction: "down", time: 10 },
+        ])
     }
 
     bindActionInput() {
@@ -147,16 +158,17 @@ class World {
         })
         //GamePad Option, Keyboard 3 for Reload || (?)
         new KeyPressListener('Digit3', () => {
+            if (!this.menu.isOpen) {
                 this.map.startCutscene([
                     { who: "hero", type: "idle", direction: "up", time: 10 },
+                    { type: "openMenu", menu: this.menu }
                 ])
-                this.menuOpen = !this.menuOpen;
-                if (!this.menuOpen) {
-                    this.map.startCutscene([
-                        { who: "hero", type: "idle", direction: "down", time: 10 },
-                    ])
-                    location.reload();
-                }
+            } else {
+                this.map.startCutscene([
+                    { who: "hero", type: "idle", direction: "down", time: 10 },
+                    { type: "closeMenu", menu: this.menu }
+                ])
+            }
         })
         //GamePad Home, Keyboard T for Inventory, (menu, reload?)
         new KeyPressListener('KeyR', () => {
@@ -201,7 +213,7 @@ class World {
 
         // var heightRatio = 1.5;
         // this.canvas.height = this.canvas.width * heightRatio;
-
+        
         this.startMap(window.WorldMaps.Procedural);
 
         this.bindHeroPositionCheck();
@@ -212,7 +224,13 @@ class World {
 
         this.inventoryHUD = new InventoryHUD();
 
-        this.menu = new Menu({debug: () => this.debug = !this.debug});
+        this.menu = new Menu({ 
+            debug: () => this.toggleDebug(), 
+            isOpen: this.menuOpen,
+            closeMenu: () => this.closeMenu()
+         });
+        this.menu.init(this.canvas.getBoundingClientRect());
+        this.map.menu = this.menu;
 
         this.startGameLoop();
 
