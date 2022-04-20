@@ -64,10 +64,8 @@ class Menu {
         this.isOpen = isOpen;
 
         if(this.isOpen) {
-            console.log('buttons active')
             document.querySelector(".game-canvas").addEventListener("pointerup", this.handler);
         } else {
-            console.log('buttons disabled')
             document.querySelector(".game-canvas").removeEventListener("pointerup", this.handler);
         }
     }
@@ -79,7 +77,6 @@ class Menu {
         Object.keys(options).forEach(key => {
             if (options[key].containsPoint(x, y, key)) {
                 options[key].action();
-                console.log(options[key])
             }
         });
     }
