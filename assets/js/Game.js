@@ -158,7 +158,22 @@ class World {
         })
         //GamePad B, Keyboard Q for Cancel, (run?)
         new KeyPressListener('KeyQ', () => {
-            this.menuOpen = false;
+            var pos = {
+                x: this.map.gameObjects['hero'].posX,
+                y: this.map.gameObjects['hero'].posY
+            }
+            var dir = this.map.gameObjects['hero'].direction;
+            var nextPos = utils.nextPosition(pos.x, pos.y, dir);
+            pos.x = nextPos.x;
+            pos.y = nextPos.y;
+
+            this.map.addTerrainObject({
+                type: 'rock',
+                pos: {
+                    x: nextPos.x,
+                    y: nextPos.y
+                }
+            })
         })
         //GamePad Select, Keyboard 1 for ?
         new KeyPressListener('Digit1', () => {

@@ -108,6 +108,15 @@ class WorldEvent {
         resolve();
     }
 
+    placeItem(resolve) {
+        this.map.addTerrainObject({
+            type: this.event.type,
+            pos: this.event.pos
+        })
+        // this.map.gameObjects[this.event.who].inventory
+        resolve();
+    }
+
     openMenu() {        
         this.map.menu.bindClick(true);
     }

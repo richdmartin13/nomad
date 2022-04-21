@@ -166,6 +166,28 @@ class WorldMap {
         return this.map;
     }
 
+    addTerrainObject({type, pos}) {
+        var source = '/assets/images/error.png';
+
+        switch(type) {
+            case 'rock':
+                source = 'assets/images/world/rocks0.png';
+            break;
+        }
+
+        console.log(`${type} at ${pos.x},${pos.y} with source ${source}`)
+
+        this.gameObjects[`${pos.x},${pos.y}`] = new TerrainObject({
+            x: pos.x,
+            y: pos.y,
+            src: source,
+            type: type
+        });
+        this.gameObjects[`${pos.x},${pos.y}`].id = `${pos.x},${pos.y}`;
+        this.gameObjects[`${pos.x},${pos.y}`].mount(this)
+        console.log(this.gameObjects[`${pos.x},${pos.y}`])
+    }
+
     addTerrainObjects(mapSize) {
         this.resetTerrainObjects()
 
