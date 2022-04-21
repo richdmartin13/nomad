@@ -17,9 +17,7 @@ class Person extends GameObject {
         this.sprite.setOffset(this.offset);
 
         this.inventory = {
-            'material': {},
-            'tool': {},
-            'food': {}
+
         },
 
         this.inventoryItemCount = null;
@@ -32,7 +30,7 @@ class Person extends GameObject {
         } else {
 
             //player can walk
-            if (this.isPlayer && state.arrow && !state.map.isCutscenePlaying) {
+            if (this.isPlayer && state.arrow && !state.map.isCutscenePlaying && !(state.map.menuIsOpen && state.map.inventoryOpen)) {
                 this.startBehavior(state, {
                     type: "walk",
                     direction: state.arrow
@@ -95,7 +93,7 @@ class Person extends GameObject {
     }
 
     addInventoryItem({item}) {
-        this.inventory[item.type][item.id] = item;
+        this.inventory[item.id] = item;
         this.inventoryItemCount = this.getInventoryItemCount();
     }
 
@@ -116,32 +114,34 @@ class Person extends GameObject {
     getInventoryItemCount() {
         var items = {};
         
-        Object.keys(this.inventory).forEach(type => {
-            if(Object.keys(this.inventory[type]).length > 0) {
-                Object.keys(this.inventory[type]).forEach(key => {
-                    if(items[this.inventory[type][key].item] == null) {
-                        items[this.inventory[type][key].item] = {
-                            item: this.inventory[type][key].item,
-                            count: 1 
-                        }
-                    } else {
-                        items[this.inventory[type][key].item].count += 1;
-                    }
-                })
+        // Object.keys(this.inventory).forEach(type => {
+        //     if(Object.keys(this.inventory[type]).length > 0) {
+        //         Object.keys(this.inventory[type]).forEach(key => {
+        //             if(items[this.inventory[type][key].item] == null) {
+        //                 items[this.inventory[type][key].item] = {
+        //                     item: this.inventory[type][key].item,
+        //                     count: 1 
+        //                 }
+        //             } else {
+        //                 items[this.inventory[type][key].item].count += 1;
+        //             }
+        //         })
+        //     }
+        // })
+
+        Object.keys(this.inventory).forEach(key => {
+            if(items[`${this.inventory[key].item}`] == null) {
+                // console.log(this.inventory[key])
+                items[this.inventory[key].item] = {
+                    item: this.inventory[key].item,
+                    src: this.inventory[key].img,
+                    count: 1,
+                    pos: {x: -1, y: 0}
+                }
+            } else {
+                items[`${this.inventory[key].item}`].count += 1;
             }
         })
         return items;
-    }
-
-    getItemCount(item) {
-        var items = this.getInventoryItemCount();
-
-        Object.values(items).forEach(object => {
-            if(object.count > 0 && object.item == item) {
-                return object.count;
-            } else {
-                return 0;
-            }
-        })
     }
 }

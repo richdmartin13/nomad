@@ -212,6 +212,14 @@ class WorldMap {
                             type = 'waterrock';
                         }
                     break;
+                    case value < 0.3:
+                        if(spawn > 100 - this.spawnRates.waterRock) {
+                            var tex = Math.floor(Math.random() * 2);
+                            source = `/assets/images/world/waterrock${tex}.png`;
+                            placeObject = true;
+                            type = 'waterrock';
+                        }
+                        break;
                     case value > 0.4:
                         //rocks spawn code
                         if (spawn > 100 - this.spawnRates.rock) {
@@ -247,12 +255,6 @@ class WorldMap {
                         }
                         break;
                     default:
-                        if(spawn > 100 - this.spawnRates.waterRock) {
-                            var tex = Math.floor(Math.random() * 2);
-                            source = `/assets/images/world/waterrock${tex}.png`;
-                            placeObject = true;
-                            type = 'waterrock';
-                        }
                         break;
                 }
 

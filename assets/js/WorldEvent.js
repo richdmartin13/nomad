@@ -109,20 +109,33 @@ class WorldEvent {
     }
 
     placeItem(resolve) {
-        this.map.addTerrainObject({
-            type: this.event.type,
-            pos: this.event.pos
-        })
+        if(this.map.gameObjects[this.event.who].inventory) {
+            this.map.addTerrainObject({
+                type: this.event.type,
+                pos: this.event.pos
+            })
+        }
         // this.map.gameObjects[this.event.who].inventory
         resolve();
     }
 
-    openMenu() {        
+    openMenu() {  
+        this.map.menuIsOpen = true;     
         this.map.menu.bindClick(true);
     }
 
     closeMenu(resolve) {
+        this.map.menuIsOpen = false;
         this.map.menu.bindClick(false);
+        resolve();
+    }
+
+    openInventory() {
+        this.map.inventoryOpen = true;
+    }
+
+    closeInventory(resolve) {
+        this.map.inventoryOpen = false;
         resolve();
     }
 

@@ -13,6 +13,7 @@ class World {
         this.gamePad = null;
         this.inventoryHUD = null;
         this.menu = null;
+        this.inventoryHUD = null;
         this.menuOpen = false;
         this.inventoryOpen = false;
         this.showGamePad = true;
@@ -197,17 +198,22 @@ class World {
         new KeyPressListener('KeyR', () => {
             this.map.startCutscene([
                 { who: "hero", type: "idle", direction: "up", time: 10 },
+                { type: 'openInventory'}
             ])
             this.inventoryOpen = !this.inventoryOpen;
             if (!this.inventoryOpen) {
                 this.map.startCutscene([
                     { who: "hero", type: "idle", direction: "down", time: 10 },
+                    { type: 'closeInventory'}
                 ])
             }
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });
         this.gamePad.bindClick(this.canvas);
+
+        this.directionInput = new DirecitonInput();
+        this.directionInput.init();
     }
 
     startMap(mapConfig) {
@@ -232,6 +238,24 @@ class World {
         this.map.mountObjects();
     }
 
+    bindMenus() {
+
+        //Bind Main Menu
+        this.menu = new Menu({ 
+            debug: () => this.toggleDebug(), 
+            isOpen: this.menuOpen,
+            closeMenu: () => this.closeMenu(),
+            gamepad: () => this.toggleGamePad(),
+         });
+        this.menu.init(this.canvas.getBoundingClientRect());
+        this.map.menu = this.menu;
+
+        //Bind Inventory Menu
+        this.inventoryHUD = new InventoryHUD({title: 'Inventory', map: this.map});
+        this.inventoryHUD.init(this.canvas.getBoundingClientRect());
+        this.map.inventoryHUD = this.inventoryHUD;
+    }
+
     init() {
 
         // var heightRatio = 1.5;
@@ -241,20 +265,7 @@ class World {
 
         this.bindHeroPositionCheck();
         this.bindActionInput();
-
-        this.directionInput = new DirecitonInput();
-        this.directionInput.init();
-
-        this.inventoryHUD = new InventoryHUD();
-
-        this.menu = new Menu({ 
-            debug: () => this.toggleDebug(), 
-            isOpen: this.menuOpen,
-            closeMenu: () => this.closeMenu(),
-            gamepad: () => this.toggleGamePad(),
-         });
-        this.menu.init(this.canvas.getBoundingClientRect());
-        this.map.menu = this.menu;
+        this.bindMenus();
 
         this.startGameLoop();
 

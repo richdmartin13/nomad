@@ -1,5 +1,6 @@
 class Menu {
-    constructor({debug, closeMenu, gamepad, isOpen}) {
+    constructor({debug, closeMenu, gamepad, isOpen, title}, options) {
+        this.title = title || 'Menu';
         this.background = new Image();
         this.background.src = '/assets/images/ui/menu.png';
         this.button = new Image();
@@ -7,7 +8,8 @@ class Menu {
         this.rect = null;
         this.isOpen = isOpen;
         this.showGamePad = true;
-        this.options = {
+        this.map = null;
+        this.options = options || {
             refresh: {
                 name: "Restart Map",
                 action: () => { location.reload() },
@@ -54,6 +56,10 @@ class Menu {
             utils.withGrid(9.5), utils.withGrid(6),
             96, 112
         )
+
+        context.fillStyle = '#212121';
+        context.font = '6px "Press Start 2P"'
+        context.fillText(this.title, utils.withGrid(10.45), utils.withGrid(6.85))
 
         Object.values(this.options).forEach(object => {
             var x = object.x;

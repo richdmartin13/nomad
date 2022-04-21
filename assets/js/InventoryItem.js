@@ -21,16 +21,7 @@ class InventoryItem {
     }
 
     getType() {
-        switch (true) {
-            case this.item == 'log':
-                return 'material';
-            case this.item == 'apple':
-                return 'food';
-            case this.item == 'rock':
-                return 'material';
-            case this.item == 'iron':
-                return 'material';
-        }
+        return this.type;
     }
 
     getTexture() {
