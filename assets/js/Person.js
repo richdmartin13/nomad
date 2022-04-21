@@ -21,10 +21,20 @@ class Person extends GameObject {
         },
 
         this.inventoryItemCount = null;
+
+        this.speed = 1;
     }
 
     update(state) {
-        this.sprite.animationFrameLimit = 8/state.frameLimitCompensation;
+        // this.sprite.animationFrameLimit = 8/state.frameLimitCompensation;
+        // this.speed = 200 * state.frameLimitCompensation;
+        // console.log(this.speed)
+        // if(this.speed > 500) {
+        //     this.speed = 500;
+        // } else if(this.speed < 100) {
+        //     this.speed = 100;
+        // }
+        // console.log(this.speed)
         if (this.movingProgressRemaining > 0) {
             this.updatePosition();
         } else {
@@ -97,15 +107,17 @@ class Person extends GameObject {
         this.inventoryItemCount = this.getInventoryItemCount();
     }
 
-    removeInventoryItem({type, item}) {
+    removeInventoryItem({item}) {
         var match;
 
-        Object.keys(this.inventory[type].forEach(key => {
-            match = key;
-        }))
+        Object.keys(this.inventory).forEach(key => {
+            if(!match && this.inventory[key].item == item) {
+                match = key;
+            }
+        })
 
         if(match) {
-            delete this.inventory[type][match];
+            delete this.inventory[match];
         } else {
             console.log('no match');
         }

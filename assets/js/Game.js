@@ -21,7 +21,10 @@ class World {
             current: 0,
             frameCount: 0,
             framesLastSecond: 0,
-            compensation: 1
+            compensation: 1,
+            timeout: 0,
+            tickCount: 0,
+            ticksLastSecond: 0
         }
         this.debug = false;
     }
@@ -69,18 +72,18 @@ class World {
             this.map.drawUpper(this.context, cameraMan);
 
             //Draw GamePad
-            if(this.showGamePad) {
+            if (this.showGamePad) {
                 this.gamePad.draw({ context: this.context });
             }
 
-            
+
             if (this.debug) {
                 //Draw FrameRate
                 this.drawFrameRate();
                 this.getPos();
             }
 
-            if (this.inventoryOpen) {
+            if (this.map.inventoryHUD.isOpen) {
                 //Draw Inventory HUD
                 this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
             }
@@ -90,9 +93,11 @@ class World {
                 this.menu.draw({ context: this.context });
             }
 
-            requestAnimationFrame(() => {
-                step();
-            })
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    step();
+                })
+            }, this.FPS.timeout)
         }
         step();
     }
@@ -110,27 +115,35 @@ class World {
         if (sec != this.FPS.currentSecond) {
             this.FPS.currentSecond = sec;
             this.FPS.framesLastSecond = this.FPS.frameCount;
+            this.FPS.ticksLastSecond = this.FPS.tickCount;
             this.FPS.frameCount = 1;
+            this.FPS.tickCount = 1;
             this.FPS.compensation = 60 / this.FPS.framesLastSecond;
         } else {
+            this.FPS.tickCount += 60 / this.FPS.timeout;
             this.FPS.frameCount++;
         }
+        this.FPS.timeout = 10/this.FPS.compensation;
     }
 
     drawFrameRate() {
         this.context.fillStyle = '#FFF';
         this.context.font = '6px "Press Start 2P"'
-        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(9.25), utils.withGrid(6.5));
+        this.context.fillText(`FPS: ${this.FPS.framesLastSecond}`, utils.withGrid(9.25), utils.withGrid(6));
         this.context.font = '5px "Press Start 2P"'
-        this.context.fillText(`x${this.FPS.compensation}`, utils.withGrid(9.25), utils.withGrid(6.9));
+        this.context.fillText(`TPS: ${Math.floor(this.FPS.ticksLastSecond)}`, utils.withGrid(9.25), utils.withGrid(6.4));
+        // this.context.font = '5px "Press Start 2P"'
+        // this.context.fillText(`tick: ${Math.floor(this.FPS.timeout)}MS`, utils.withGrid(9.25), utils.withGrid(6.4));
+        this.context.font = '5px "Press Start 2P"'
+        this.context.fillText(`x${Math.round(this.FPS.compensation * 100)/100}`, utils.withGrid(9.25), utils.withGrid(6.8));
     }
 
     getPos() {
         this.context.fillStyle = '#FFF';
         this.context.font = '6px "Press Start 2P"'
-        this.context.fillText(`(${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)})`, utils.withGrid(13.25), utils.withGrid(6.5));
+        this.context.fillText(`(${Math.floor(this.map.gameObjects['hero'].posX / 16)},${Math.floor(this.map.gameObjects['hero'].posY / 16)})`, utils.withGrid(13.25), utils.withGrid(6));
         this.context.font = '5px "Press Start 2P"'
-        this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.25), utils.withGrid(6.9));
+        this.context.fillText(`${this.map.gameObjects['hero'].direction}`, utils.withGrid(13.25), utils.withGrid(6.4));
     }
 
     bindHeroPositionCheck() {
@@ -143,7 +156,7 @@ class World {
 
     closeMenu() {
         this.map.startCutscene([
-            {type: 'closeMenu', menu: this.map.menu},
+            { type: 'closeMenu', menu: this.map.menu },
             { who: "hero", type: "idle", direction: "down", time: 10 },
         ])
     }
@@ -151,11 +164,15 @@ class World {
     bindActionInput() {
         //Enter Key
         new KeyPressListener('Enter', () => {
-            this.map.checkForActionCutscene();
+            if(!this.map.isCutscenePlaying) {
+                this.map.checkForActionCutscene();
+            }
         })
         //GamePad A, Keyboard E for Interaction
         new KeyPressListener('KeyE', () => {
-            this.map.checkForActionCutscene();
+            if(!this.map.isCutscenePlaying) {
+                this.map.checkForActionCutscene();
+            }
         })
         //GamePad B, Keyboard Q for Cancel, (run?)
         new KeyPressListener('KeyQ', () => {
@@ -168,19 +185,23 @@ class World {
             pos.x = nextPos.x;
             pos.y = nextPos.y;
 
-            this.map.addTerrainObject({
-                type: 'rock',
-                pos: {
-                    x: nextPos.x,
-                    y: nextPos.y
-                }
-            })
+            this.map.startCutscene([
+                {type: 'placeItem', item: 'rock', pos: pos}
+            ])
+
+            // this.map.addTerrainObject({
+            //     type: 'rock',
+            //     pos: {
+            //         x: nextPos.x,
+            //         y: nextPos.y
+            //     }
+            // })
         })
         //GamePad Select, Keyboard 1 for ?
         new KeyPressListener('Digit1', () => {
             this.debug = !this.debug;
         })
-        //GamePad Option, Keyboard 3 for Reload || (?)
+        //GamePad Option, Keyboard 3 for Start Menu
         new KeyPressListener('Digit3', () => {
             if (!this.menu.isOpen) {
                 this.map.startCutscene([
@@ -194,19 +215,30 @@ class World {
                 ])
             }
         })
-        //GamePad Home, Keyboard T for Inventory, (menu, reload?)
+        //GamePad Home, Keyboard T for Inventory
         new KeyPressListener('KeyR', () => {
-            this.map.startCutscene([
-                { who: "hero", type: "idle", direction: "up", time: 10 },
-                { type: 'openInventory'}
-            ])
-            this.inventoryOpen = !this.inventoryOpen;
-            if (!this.inventoryOpen) {
+            if (!this.map.inventoryHUD.isOpen) {
+                this.map.startCutscene([
+                    { who: "hero", type: "idle", direction: "up", time: 10 },
+                    { type: 'openInventory' }
+                ])
+            } else {
                 this.map.startCutscene([
                     { who: "hero", type: "idle", direction: "down", time: 10 },
-                    { type: 'closeInventory'}
+                    { type: 'closeInventory' }
                 ])
             }
+            // this.map.startCutscene([
+            //     { who: "hero", type: "idle", direction: "up", time: 10 },
+            //     { type: 'openInventory'}
+            // ])
+            // this.inventoryOpen = !this.inventoryOpen;
+            // if (!this.map.inventoryHUD.isOpen) {
+            //     this.map.startCutscene([
+            //         { who: "hero", type: "idle", direction: "down", time: 10 },
+            //         { type: 'closeInventory'}
+            //     ])
+            // }
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });
@@ -241,17 +273,20 @@ class World {
     bindMenus() {
 
         //Bind Main Menu
-        this.menu = new Menu({ 
-            debug: () => this.toggleDebug(), 
+        this.menu = new Menu({
+            debug: () => this.toggleDebug(),
             isOpen: this.menuOpen,
             closeMenu: () => this.closeMenu(),
             gamepad: () => this.toggleGamePad(),
-         });
+        });
         this.menu.init(this.canvas.getBoundingClientRect());
         this.map.menu = this.menu;
 
         //Bind Inventory Menu
-        this.inventoryHUD = new InventoryHUD({title: 'Inventory', map: this.map});
+        this.inventoryHUD = new InventoryHUD({
+            title: 'Inventory',
+            map: this.map
+        });
         this.inventoryHUD.init(this.canvas.getBoundingClientRect());
         this.map.inventoryHUD = this.inventoryHUD;
     }
@@ -260,7 +295,7 @@ class World {
 
         // var heightRatio = 1.5;
         // this.canvas.height = this.canvas.width * heightRatio;
-        
+
         this.startMap(window.WorldMaps.Procedural);
 
         this.bindHeroPositionCheck();

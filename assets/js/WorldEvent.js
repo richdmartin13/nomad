@@ -64,6 +64,14 @@ class WorldEvent {
         document.addEventListener("PersonFinishedRunning", completeHandler)
     }
 
+    timeout(resolve) {
+        var timeout = this.event.time || 100;
+
+        setTimeout(() => {
+            resolve();
+        }, timeout);
+    }
+
     message(resolve) {
         const message = new Message({
             who: this.event.who,
@@ -109,13 +117,29 @@ class WorldEvent {
     }
 
     placeItem(resolve) {
-        if(this.map.gameObjects[this.event.who].inventory) {
-            this.map.addTerrainObject({
-                type: this.event.type,
+        var hero = this.map.gameObjects['hero'];
+
+        var itemCount = hero.getInventoryItemCount();
+        var item = null;
+        
+        Object.keys(itemCount).forEach(key => {
+            if(key == this.event.item) {
+                item = itemCount[key];
+            }
+        })
+
+        if(item !== null) {
+            if(this.map.addTerrainObject({
+                type: this.event.item,
                 pos: this.event.pos
-            })
+            })) {
+                hero.removeInventoryItem({item: item.item});
+            }
+        } else {
+            this.map.startCutscene([
+                {type: "message", text: `You're out of ${this.event.item}s!`}
+            ])
         }
-        // this.map.gameObjects[this.event.who].inventory
         resolve();
     }
 
@@ -131,11 +155,11 @@ class WorldEvent {
     }
 
     openInventory() {
-        this.map.inventoryOpen = true;
+        this.map.inventoryHUD.bindClick(true);
     }
 
     closeInventory(resolve) {
-        this.map.inventoryOpen = false;
+        this.map.inventoryHUD.bindClick(false);
         resolve();
     }
 

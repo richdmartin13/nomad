@@ -35,7 +35,7 @@ class Menu {
                 name: "Close Menu",
                 action: closeMenu,
                 x: utils.withGrid(10.5),
-                y: utils.withGrid(11),
+                y: utils.withGrid(11.5),
                 containsPoint: (x, y, key) => this.containsPoint(x, y, key)
             }
         }

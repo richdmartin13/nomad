@@ -5,19 +5,25 @@ class InventoryHUD extends Menu {
         this.options = config.options || {
             equip: {
                 name: "Equip",
-                action: () => { config.EquipAction },
+                action: () => { config.EquipAction || console.log('equip!') },
                 x: utils.withGrid(10.5),
-                y: utils.withGrid(11),
+                y: utils.withGrid(11.5),
                 containsPoint: (x, y, key) => this.containsPoint(x, y, key)
             },
             drop: {
                 name: "Drop",
-                action: () => { config.dropAction },
+                action: () => { config.dropAction || console.log('drop!') },
                 x: utils.withGrid(12.5),
-                y: utils.withGrid(11),
+                y: utils.withGrid(11.5),
                 containsPoint: (x, y, key) => this.containsPoint(x, y, key)
             },
         };
+        this.equippedItems = {
+            placeable: null,
+            tool: null,
+            food: null,
+            armor: null
+        }
         this.map = config.map;
         this.inventoryContainer = new Image();
         this.inventoryContainer.src = '/assets/images/ui/inventory.png';
@@ -62,7 +68,7 @@ class InventoryHUD extends Menu {
                 }
                 items[key].pos = {
                     x: utils.withGrid(xCount),
-                    y: utils.withGrid(yCount - 2)
+                    y: utils.withGrid(yCount - 1)
                 }
                 xCount++;
             }
@@ -95,5 +101,51 @@ class InventoryHUD extends Menu {
             context.fillText(object.name, x + 3, y+11);
         })
         
+    }
+
+    init(rect) {
+        var buttonHandler = this.buttonHandler;
+        var options = this.options;
+        var isOpen = this.isOpen;
+        this.handler = function(e) {
+            buttonHandler(e, rect, options, isOpen);
+        }
+    }
+
+    bindClick(isOpen) {
+        this.isOpen = isOpen;
+
+        if(this.isOpen) {
+            document.querySelector(".game-canvas").addEventListener("pointerup", this.handler);
+        } else {
+            document.querySelector(".game-canvas").removeEventListener("pointerup", this.handler);
+        }
+    }
+
+    buttonHandler(e, rect, options) {
+        const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
+        const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
+
+        Object.keys(options).forEach(key => {
+            if (options[key].containsPoint(x, y, key)) {
+                options[key].action();
+            }
+        });
+    }
+
+    containsPoint(x, y, key) {
+        var active = null;
+
+        Object.keys(this.options).forEach(k => {
+            if(key == k) {
+                if (x < this.options[key].x/16 - 0.1 || x > this.options[key].x/16 + 2.6 || y < this.options[key].y/16 - 0.1 || y > this.options[key].y/16 + 1) {
+                    active = null;
+                } else {
+                    active = key;
+                }
+            }
+        })
+
+        return active === key;
     }
 }

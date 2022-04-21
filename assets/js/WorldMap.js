@@ -175,17 +175,38 @@ class WorldMap {
             break;
         }
 
-        console.log(`${type} at ${pos.x},${pos.y} with source ${source}`)
+        var posX = pos.x/16;
+        var posY = pos.y/16;
 
-        this.gameObjects[`${pos.x},${pos.y}`] = new TerrainObject({
-            x: pos.x,
-            y: pos.y,
-            src: source,
-            type: type
-        });
-        this.gameObjects[`${pos.x},${pos.y}`].id = `${pos.x},${pos.y}`;
-        this.gameObjects[`${pos.x},${pos.y}`].mount(this)
-        console.log(this.gameObjects[`${pos.x},${pos.y}`])
+        if(this.gameObjects[`${posX},${posY}`] == null) {
+            this.gameObjects[`${posX},${posY}`] = new TerrainObject({
+                x: pos.x,
+                y: pos.y,
+                src: source,
+                type: type
+            });
+            this.gameObjects[`${posX},${posY}`].id = `${posX},${posY}`;
+            this.gameObjects[`${posX},${posY}`].mount(this);
+            return true;
+        } else {
+            if(!this.gameObjects[`${posX},${posY}`].collision) {
+                delete this.gameObjects[`${posX},${posY}`]
+                this.gameObjects[`${posX},${posY}`] = new TerrainObject({
+                    x: pos.x,
+                    y: pos.y,
+                    src: source,
+                    type: type
+                });
+                this.gameObjects[`${posX},${posY}`].id = `${posX},${posY}`;
+                this.gameObjects[`${posX},${posY}`].mount(this);
+                return true;
+            } else {
+                this.startCutscene([
+                    {type: "message", text: `You can't place that there!`},
+                ])
+                return false;
+            }
+        }
     }
 
     addTerrainObjects(mapSize) {
@@ -317,7 +338,6 @@ class WorldMap {
     }
 
     removeGameObject(x, y) {
-
         const match = Object.values(this.gameObjects).find(object => {
             return `${object.posX},${object.posY}` === `${x},${y}`
         });
