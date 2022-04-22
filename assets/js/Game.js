@@ -164,14 +164,18 @@ class World {
     bindActionInput() {
         //Enter Key
         new KeyPressListener('Enter', () => {
-            if(!this.map.isCutscenePlaying) {
+            if(this.map.isCutscenePlaying == false && this.map.placeFailed == false) {
                 this.map.checkForActionCutscene();
+            } else {
+                this.map.placeFailed = false;
             }
         })
         //GamePad A, Keyboard E for Interaction
         new KeyPressListener('KeyE', () => {
-            if(!this.map.isCutscenePlaying) {
+            if(this.map.isCutscenePlaying == false && this.map.placeFailed == false) {
                 this.map.checkForActionCutscene();
+            } else {
+                this.map.placeFailed = false;
             }
         })
         //GamePad B, Keyboard Q for Cancel, (run?)

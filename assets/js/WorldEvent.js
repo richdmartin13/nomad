@@ -1,11 +1,11 @@
 class WorldEvent {
-    constructor({map, event}) {
+    constructor({ map, event }) {
         this.map = map,
-        this.event = event;
+            this.event = event;
     }
 
     idle(resolve) {
-        const who = this.map.gameObjects[ this.event.who ];
+        const who = this.map.gameObjects[this.event.who];
         who.startBehavior({
             map: this.map
         }, {
@@ -15,7 +15,7 @@ class WorldEvent {
         })
 
         const completeHandler = e => {
-            if(e.detail.whoId === this.event.who) {
+            if (e.detail.whoId === this.event.who) {
                 document.removeEventListener("PersonFinishedIdle", completeHandler);
                 resolve();
             }
@@ -25,7 +25,7 @@ class WorldEvent {
     }
 
     walk(resolve) {
-        const who = this.map.gameObjects[ this.event.who ];
+        const who = this.map.gameObjects[this.event.who];
         who.startBehavior({
             map: this.map
         }, {
@@ -35,7 +35,7 @@ class WorldEvent {
         })
 
         const completeHandler = e => {
-            if(e.detail.whoId === this.event.who) {
+            if (e.detail.whoId === this.event.who) {
                 document.removeEventListener("PersonFinishedWalking", completeHandler);
                 resolve();
             }
@@ -45,7 +45,7 @@ class WorldEvent {
     }
 
     run(resolve) {
-        const who = this.map.gameObjects[ this.event.who ];
+        const who = this.map.gameObjects[this.event.who];
         who.startBehavior({
             map: this.map
         }, {
@@ -55,7 +55,7 @@ class WorldEvent {
         })
 
         const completeHandler = e => {
-            if(e.detail.whoId === this.event.who) {
+            if (e.detail.whoId === this.event.who) {
                 document.removeEventListener("PersonFinishedRunning", completeHandler);
                 resolve();
             }
@@ -73,10 +73,14 @@ class WorldEvent {
     }
 
     message(resolve) {
+        this.map.messageOpen = true;
         const message = new Message({
             who: this.event.who,
             text: this.event.text,
-            onComplete: () => resolve()
+            onComplete: () => {
+                this.map.messageOpen = false;
+                resolve()
+            }
         })
         message.init(document.querySelector(".game-container"))
     }
@@ -96,23 +100,26 @@ class WorldEvent {
             item: this.event.item
         })
         item.init();
+
         const completeHandler = e => {
-            if(e.detail.whoId === this.event.who) {
+            if (e.detail.whoId === this.event.who) {
                 document.removeEventListener("collectItem", completeHandler);
                 resolve();
             }
         }
+
         document.addEventListener("collectItem", completeHandler)
-        for(var x = 0; x < this.event.count; x++ ) {
+        for (var x = 0; x < this.event.count; x++) {
             item.id = `${item.id}${x}`;
-            this.map.gameObjects[this.event.who].addInventoryItem({item: item});
+            this.map.gameObjects[this.event.who].addInventoryItem({ item: item });
         }
-        setTimeout(() => {
-            this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
-            this.map.startCutscene([
-                { type: "message", text: `You found ${this.event.count} ${this.event.item}${this.event.count > 1 ? 's!' : '!'}`}
-            ])
-        }, 200)
+
+        this.map.startCutscene([
+            { type: "message", text: `You found ${this.event.count} ${this.event.item}${this.event.count > 1 ? 's!' : '!'}` }
+        ])
+
+        this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
+
         resolve();
     }
 
@@ -121,30 +128,32 @@ class WorldEvent {
 
         var itemCount = hero.getInventoryItemCount();
         var item = null;
-        
+
         Object.keys(itemCount).forEach(key => {
-            if(key == this.event.item) {
+            if (key == this.event.item) {
                 item = itemCount[key];
             }
         })
 
-        if(item !== null) {
-            if(this.map.addTerrainObject({
+        if (item !== null) {
+            if (this.map.addTerrainObject({
                 type: this.event.item,
-                pos: this.event.pos
+                pos: this.event.pos,
+                item: item
             })) {
-                hero.removeInventoryItem({item: item.item});
+                hero.removeInventoryItem({ item: item.item });
             }
+            resolve();
         } else {
             this.map.startCutscene([
-                {type: "message", text: `You're out of ${this.event.item}s!`}
+                { type: "message", text: `You're out of ${this.event.item}s!` }
             ])
+            this.map.placeFailed = true;
         }
-        resolve();
     }
 
-    openMenu() {  
-        this.map.menuIsOpen = true;     
+    openMenu() {
+        this.map.menuIsOpen = true;
         this.map.menu.bindClick(true);
     }
 

@@ -37,7 +37,7 @@ class InventoryHUD extends Menu {
         this.button.src = '/assets/images/ui/buttonSmall.png'
     }
 
-    draw({context}) {
+    draw({ context }) {
         var hero = this.map.gameObjects['hero'];
 
         context.drawImage(
@@ -97,32 +97,33 @@ class InventoryHUD extends Menu {
             context.drawImage(this.button, x, y);
 
             context.font = '5px "Press Start 2P"';
-            context.fillStyle='#FFF';
-            context.fillText(object.name, x + 3, y+11);
+            context.fillStyle = '#FFF';
+            context.fillText(object.name, x + 3, y + 11);
         })
-        
+
     }
 
     init(rect) {
         var buttonHandler = this.buttonHandler;
         var options = this.options;
         var isOpen = this.isOpen;
-        this.handler = function(e) {
-            buttonHandler(e, rect, options, isOpen);
+        var itemCount = this.itemCount;
+        this.handler = function (e) {
+            buttonHandler(e, rect, options, isOpen, itemCount);
         }
     }
 
     bindClick(isOpen) {
         this.isOpen = isOpen;
 
-        if(this.isOpen) {
+        if (this.isOpen) {
             document.querySelector(".game-canvas").addEventListener("pointerup", this.handler);
         } else {
             document.querySelector(".game-canvas").removeEventListener("pointerup", this.handler);
         }
     }
 
-    buttonHandler(e, rect, options) {
+    buttonHandler(e, rect, options, itemCount) {
         const x = ((e.clientX - rect.left) / 16) / utils.getScalingFactor()
         const y = ((e.clientY - rect.top) / 16) / utils.getScalingFactor()
 
@@ -131,20 +132,33 @@ class InventoryHUD extends Menu {
                 options[key].action();
             }
         });
+
+        // Object.keys(itemCount).forEach(key => {
+        //     if (itemCount[key].select(x, y, key)) {
+        //         itemCount[key].action();
+        //     };
+        // })
     }
 
     containsPoint(x, y, key) {
         var active = null;
 
-        Object.keys(this.options).forEach(k => {
-            if(key == k) {
-                if (x < this.options[key].x/16 - 0.1 || x > this.options[key].x/16 + 2.6 || y < this.options[key].y/16 - 0.1 || y > this.options[key].y/16 + 1) {
-                    active = null;
-                } else {
-                    active = key;
-                }
-            }
-        })
+        if (x < this.options[key].x / 16 - 0.1 || x > this.options[key].x / 16 + 2.6 || y < this.options[key].y / 16 - 0.1 || y > this.options[key].y / 16 + 1) {
+            active = null;
+        } else {
+            active = key;
+        }
+        return active === key;
+    }
+
+    select(x, y, key) {
+        var active = null;
+
+        if (x < this.options[key].x / 16 - 0.1 || x > this.options[key].x / 16 + 2.6 || y < this.options[key].y / 16 - 0.1 || y > this.options[key].y / 16 + 1) {
+            active = null;
+        } else {
+            active = key;
+        }
 
         return active === key;
     }

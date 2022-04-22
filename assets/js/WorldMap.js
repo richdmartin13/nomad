@@ -21,6 +21,7 @@ class WorldMap {
         this.upper.src = config.upperSrc;
 
         this.isCutscenePlaying = false;
+        this.placeFailed = false;
 
         this.map = null;
         this.tileset = null;
@@ -166,7 +167,7 @@ class WorldMap {
         return this.map;
     }
 
-    addTerrainObject({type, pos}) {
+    addTerrainObject({type, pos, item}) {
         var source = '/assets/images/error.png';
 
         switch(type) {
@@ -178,7 +179,31 @@ class WorldMap {
         var posX = pos.x/16;
         var posY = pos.y/16;
 
-        if(this.gameObjects[`${posX},${posY}`] == null) {
+        if(item == null) {
+            this.startCutscene([
+                {type: "message", text: `You can't place that there!`},
+            ])
+            return false;
+        // If there's not a game object here and there's an item.
+        // if not, then place an item.
+        } else if(this.gameObjects[`${posX},${posY}`] == null && item !== null) {
+            this.gameObjects[`${posX},${posY}`] = new TerrainObject({
+                x: pos.x,
+                y: pos.y,
+                src: source,
+                type: type
+            });
+            this.gameObjects[`${posX},${posY}`].id = `${posX},${posY}`;
+            this.gameObjects[`${posX},${posY}`].mount(this);
+
+            //Placed an object
+            return true;
+
+        // Otherwise, check if the game object in the space has collision.
+        // This will have to change in the future, as things like bridges won't have
+        // collision and still need to be placed/harvested while not being placed over.
+        } else if(!this.gameObjects[`${posX},${posY}`].collision && item !== null) {
+            delete this.gameObjects[`${posX},${posY}`]
             this.gameObjects[`${posX},${posY}`] = new TerrainObject({
                 x: pos.x,
                 y: pos.y,
@@ -188,24 +213,14 @@ class WorldMap {
             this.gameObjects[`${posX},${posY}`].id = `${posX},${posY}`;
             this.gameObjects[`${posX},${posY}`].mount(this);
             return true;
+
+        // Finally, if none of the above are true, prevent the user from placing
+        // a block altogether.
         } else {
-            if(!this.gameObjects[`${posX},${posY}`].collision) {
-                delete this.gameObjects[`${posX},${posY}`]
-                this.gameObjects[`${posX},${posY}`] = new TerrainObject({
-                    x: pos.x,
-                    y: pos.y,
-                    src: source,
-                    type: type
-                });
-                this.gameObjects[`${posX},${posY}`].id = `${posX},${posY}`;
-                this.gameObjects[`${posX},${posY}`].mount(this);
-                return true;
-            } else {
-                this.startCutscene([
-                    {type: "message", text: `You can't place that there!`},
-                ])
-                return false;
-            }
+            this.startCutscene([
+                {type: "message", text: `You can't place that there!`},
+            ])
+            return false;
         }
     }
 

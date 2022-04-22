@@ -19,6 +19,12 @@ class Person extends GameObject {
         this.inventory = {
 
         },
+        this.activeBar = {
+            tool: null,
+            prop: null,
+            food: null,
+            armor: null
+        }
 
         this.inventoryItemCount = null;
 
@@ -40,7 +46,7 @@ class Person extends GameObject {
         } else {
 
             //player can walk
-            if (this.isPlayer && state.arrow && !state.map.isCutscenePlaying && !(state.map.menuIsOpen && state.map.inventoryOpen)) {
+            if (this.isPlayer && state.arrow && !state.map.isCutscenePlaying && !(state.map.menuIsOpen && state.map.inventoryOpen) && !state.map.messageOpen) {
                 this.startBehavior(state, {
                     type: "walk",
                     direction: state.arrow
