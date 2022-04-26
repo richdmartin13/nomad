@@ -20,6 +20,7 @@ class WorldMap {
         this.upper = new Image();
         this.upper.src = config.upperSrc;
 
+        this.eventQueue = [];
         this.isCutscenePlaying = false;
         this.placeFailed = false;
 
@@ -217,6 +218,7 @@ class WorldMap {
         // Finally, if none of the above are true, prevent the user from placing
         // a block altogether.
         } else {
+            this.placeFailed = true;
             this.startCutscene([
                 {type: "message", text: `You can't place that there!`},
             ])
@@ -449,8 +451,18 @@ class WorldMap {
             return `${object.posX},${object.posY}` === `${nextCoords.x},${nextCoords.y}`
         });
         if (!this.isCutscenePlaying && match && match.talking.length) {
-            this.startCutscene(match.talking[0].events)
+            this.addToEventQueue(match.talking[0].events[0])
         }
+    }
+
+    addToEventQueue(event) {
+        this.eventQueue.push(event);
+        console.log(this.eventQueue);
+    }
+
+    checkEventQueue() {
+        this.startCutscene(this.eventQueue);
+        this.eventQueue = [];
     }
 
     //Wall Code

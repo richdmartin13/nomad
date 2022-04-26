@@ -1,22 +1,29 @@
 class World {
     constructor(config) {
+        //Canvas
         this.element = config.element;
         this.canvas = this.element.querySelector(".game-canvas");
         this.context = this.canvas.getContext('2d');
+
+        //Local map settings
         this.map = null;
-        this.tileMap = null;
         this.mapSize = { x: 64, y: 64 }
         this.tileSize = { x: 16, y: 16 }
         this.smoothing = 60;
         this.terrain = null;
+
+        //Global map settings
         this.mapList = {};
+
+        //HUD Controllers
         this.gamePad = null;
-        this.inventoryHUD = null;
         this.menu = null;
         this.inventoryHUD = null;
         this.menuOpen = false;
         this.inventoryOpen = false;
         this.showGamePad = true;
+
+        //Debug settings
         this.FPS = {
             current: 0,
             frameCount: 0,
@@ -93,11 +100,16 @@ class World {
                 this.menu.draw({ context: this.context });
             }
 
-            setTimeout(() => {
+            if(this.map.gameObjects['hero'].movingProgressRemaining == 0) {
+                if(!(this.menu.isOpen || this.map.inventoryHUD.isOpen))
+                    this.map.checkEventQueue();
+            }
+
+            // setTimeout(() => {
                 requestAnimationFrame(() => {
                     step();
                 })
-            }, this.FPS.timeout)
+            // }, this.FPS.timeout)
         }
         step();
     }
@@ -150,6 +162,7 @@ class World {
         document.addEventListener("PersonFinishedWalking", e => {
             if (e.detail.whoId === "hero") {
                 this.map.checkForFootstepCutscene();
+                this.map.checkEventQueue();
             }
         })
     }
@@ -157,64 +170,50 @@ class World {
     closeMenu() {
         this.map.startCutscene([
             { type: 'closeMenu', menu: this.map.menu },
-            { who: "hero", type: "idle", direction: "down", time: 10 },
         ])
+        this.map.addToEventQueue({ who: "hero", type: "idle", direction: "down", time: 10 })
     }
 
     bindActionInput() {
         //Enter Key
         new KeyPressListener('Enter', () => {
-            if(this.map.isCutscenePlaying == false && this.map.placeFailed == false) {
+            if(this.map.isCutscenePlaying == false ) {
                 this.map.checkForActionCutscene();
-            } else {
-                this.map.placeFailed = false;
             }
         })
+
         //GamePad A, Keyboard E for Interaction
         new KeyPressListener('KeyE', () => {
-            if(this.map.isCutscenePlaying == false && this.map.placeFailed == false) {
+            if(this.map.isCutscenePlaying == false && !this.map.placeFailed) {
                 this.map.checkForActionCutscene();
-            } else {
-                this.map.placeFailed = false;
             }
+            // } else if(this.map.isCutscenePlaying == false && this.map.placeFailed) {
+            //     this.map.placeFailed = false;
+            // }
         })
+
         //GamePad B, Keyboard Q for Cancel, (run?)
         new KeyPressListener('KeyQ', () => {
-            var pos = {
-                x: this.map.gameObjects['hero'].posX,
-                y: this.map.gameObjects['hero'].posY
-            }
-            var dir = this.map.gameObjects['hero'].direction;
-            var nextPos = utils.nextPosition(pos.x, pos.y, dir);
-            pos.x = nextPos.x;
-            pos.y = nextPos.y;
 
-            this.map.startCutscene([
-                {type: 'placeItem', item: 'rock', pos: pos}
-            ])
-
-            // this.map.addTerrainObject({
-            //     type: 'rock',
-            //     pos: {
-            //         x: nextPos.x,
-            //         y: nextPos.y
-            //     }
-            // })
+            this.map.addToEventQueue({
+                type: 'placeItem', item: 'rock'
+            })
         })
+
         //GamePad Select, Keyboard 1 for ?
         new KeyPressListener('Digit1', () => {
-            this.debug = !this.debug;
+            console.log('select!')
         })
         //GamePad Option, Keyboard 3 for Start Menu
         new KeyPressListener('Digit3', () => {
             if (!this.menu.isOpen) {
+                this.map.addToEventQueue({ who: "hero", type: "idle", direction: "up", time: 10 })
                 this.map.startCutscene([
-                    { who: "hero", type: "idle", direction: "up", time: 10 },
                     { type: "openMenu", menu: this.menu }
                 ])
             } else {
+                this.map.addToEventQueue({ who: "hero", type: "idle", direction: "down", time: 10 })
                 this.map.startCutscene([
-                    { who: "hero", type: "idle", direction: "down", time: 10 },
                     { type: "closeMenu", menu: this.menu }
                 ])
             }
@@ -222,27 +221,16 @@ class World {
         //GamePad Home, Keyboard T for Inventory
         new KeyPressListener('KeyR', () => {
             if (!this.map.inventoryHUD.isOpen) {
+                this.map.addToEventQueue({ who: "hero", type: "idle", direction: "up", time: 10 })
                 this.map.startCutscene([
-                    { who: "hero", type: "idle", direction: "up", time: 10 },
                     { type: 'openInventory' }
                 ])
             } else {
+                this.map.addToEventQueue({ who: "hero", type: "idle", direction: "down", time: 10 })
                 this.map.startCutscene([
-                    { who: "hero", type: "idle", direction: "down", time: 10 },
                     { type: 'closeInventory' }
                 ])
             }
-            // this.map.startCutscene([
-            //     { who: "hero", type: "idle", direction: "up", time: 10 },
-            //     { type: 'openInventory'}
-            // ])
-            // this.inventoryOpen = !this.inventoryOpen;
-            // if (!this.map.inventoryHUD.isOpen) {
-            //     this.map.startCutscene([
-            //         { who: "hero", type: "idle", direction: "down", time: 10 },
-            //         { type: 'closeInventory'}
-            //     ])
-            // }
         })
 
         this.gamePad = new GamePad({ buttonSize: 16 });

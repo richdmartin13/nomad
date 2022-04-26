@@ -79,6 +79,7 @@ class WorldEvent {
             text: this.event.text,
             onComplete: () => {
                 this.map.messageOpen = false;
+                this.map.placeFailed = false;
                 resolve()
             }
         })
@@ -129,6 +130,15 @@ class WorldEvent {
         var itemCount = hero.getInventoryItemCount();
         var item = null;
 
+        var pos = {
+            x: this.map.gameObjects['hero'].posX,
+            y: this.map.gameObjects['hero'].posY
+        }
+        var dir = this.map.gameObjects['hero'].direction;
+        var nextPos = utils.nextPosition(pos.x, pos.y, dir);
+        pos.x = nextPos.x;
+        pos.y = nextPos.y;
+
         Object.keys(itemCount).forEach(key => {
             if (key == this.event.item) {
                 item = itemCount[key];
@@ -138,17 +148,18 @@ class WorldEvent {
         if (item !== null) {
             if (this.map.addTerrainObject({
                 type: this.event.item,
-                pos: this.event.pos,
+                pos: pos,
                 item: item
             })) {
                 hero.removeInventoryItem({ item: item.item });
+                this.map.placeFailed = false;
             }
             resolve();
         } else {
+            this.map.placeFailed = true;
             this.map.startCutscene([
                 { type: "message", text: `You're out of ${this.event.item}s!` }
             ])
-            this.map.placeFailed = true;
         }
     }
 
