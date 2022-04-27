@@ -75,7 +75,7 @@ class InventoryHUD extends Menu {
             count = items[key].count;
 
             var x = items[key].pos.x + utils.withGrid(10.75);
-            var y = items[key].pos.y + utils.withGrid(9.25);
+            var y = items[key].pos.y + utils.withGrid(10.25);
 
             context.drawImage(
                 items[key].src,

@@ -90,6 +90,11 @@ class World {
                 this.getPos();
             }
 
+            if (this.map.chestMenu.isOpen) {
+                //Draw Inventory HUD
+                this.chestMenu.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
+            }
+
             if (this.map.inventoryHUD.isOpen) {
                 //Draw Inventory HUD
                 this.inventoryHUD.draw({ context: this.context, hero: this.map.gameObjects["hero"] });
@@ -101,7 +106,7 @@ class World {
             }
 
             if(this.map.gameObjects['hero'].movingProgressRemaining == 0) {
-                if(!(this.menu.isOpen || this.map.inventoryHUD.isOpen))
+                // if(!(this.menu.isOpen || this.map.inventoryHUD.isOpen))
                     this.map.checkEventQueue();
             }
 
@@ -202,7 +207,17 @@ class World {
 
         //GamePad Select, Keyboard 1 for ?
         new KeyPressListener('Digit1', () => {
-            console.log('select!')
+            if (!this.map.chestMenu.isOpen) {
+                this.map.addToEventQueue({ who: "hero", type: "idle", direction: "up", time: 10 })
+                this.map.startCutscene([
+                    { type: 'openChest' }
+                ])
+            } else {
+                this.map.addToEventQueue({ who: "hero", type: "idle", direction: "down", time: 10 })
+                this.map.startCutscene([
+                    { type: 'closeChest' }
+                ])
+            }
         })
         //GamePad Option, Keyboard 3 for Start Menu
         new KeyPressListener('Digit3', () => {
@@ -281,6 +296,14 @@ class World {
         });
         this.inventoryHUD.init(this.canvas.getBoundingClientRect());
         this.map.inventoryHUD = this.inventoryHUD;
+
+        //Bind Chest Menu
+        this.chestMenu = new ChestMenu({
+            title: 'Chest',
+            map: this.map
+        });
+        this.chestMenu.init(this.canvas.getBoundingClientRect());
+        this.map.chestMenu = this.chestMenu;
     }
 
     init() {

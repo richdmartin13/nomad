@@ -183,6 +183,14 @@ class WorldEvent {
         resolve();
     }
 
+    openChest() {
+        this.map.chestMenu.bindClick(true);
+    }
+
+    closeChest() {
+        this.map.chestMenu.bindClick(false);
+    }
+
     init() {
         return new Promise(resolve => {
             this[this.event.type](resolve)
