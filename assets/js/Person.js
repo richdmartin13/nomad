@@ -19,11 +19,23 @@ class Person extends GameObject {
         this.inventory = {
 
         },
-        this.activeBar = {
-            tool: null,
-            prop: null,
-            food: null,
-            armor: null
+        this.equippedItems = {
+            tool: new InventoryItem({
+                who: 'hero',
+                item: 'tool'
+            }),
+            block: new InventoryItem({
+                who: 'hero',
+                item: 'block'
+            }),
+            food: new InventoryItem({
+                who: 'hero',
+                item: 'food'
+            }),
+            armor: new InventoryItem({
+                who: 'hero',
+                item: 'armor'
+            }),
         }
 
         this.inventoryItemCount = null;
@@ -161,5 +173,26 @@ class Person extends GameObject {
             }
         })
         return items;
+    }
+
+    getEquippedItems() {
+        return this.equippedItems;
+    }
+
+    equipItem({inventory}) {
+        console.log(inventory)
+        Object.keys(inventory).forEach(key => {
+            if(inventory[key].isSelected) {
+                this.equippedItems.block = inventory[key];
+                this.equippedItems.block.img = inventory[key].src
+            }
+        })
+    }
+
+    dropItem() {
+        this.equippedItems.block = new InventoryItem({
+            who: 'hero',
+            item: 'block'
+        })
     }
 }

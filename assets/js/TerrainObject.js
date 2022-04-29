@@ -13,7 +13,7 @@ class TerrainObject extends GameObject {
 
         this.sprite.setOffset(this.offset);
         this.talking = [
-            { events : []}
+            { events: [] }
         ];
 
         this.init();
@@ -32,15 +32,21 @@ class TerrainObject extends GameObject {
                     this.item = Math.random() * 100 > 80 ? 'iron' : 'rock';
                     break;
             }
-            if(this.item == null) {
+            if (this.item == null) {
                 this.hasItem = false;
             } else {
                 var count = Math.floor(Math.random() * 4) + 1;
 
                 this.talking[0].events.push(
-                    {who: "hero", type: "collectItem", item: this.item, pos: {x: this.posX, y: this.posY }, count: count}
+                    { who: "hero", type: "collectItem", item: this.item, pos: { x: this.posX, y: this.posY }, count: count }
                 )
             }
+        }
+
+        if (this.type == 'chest') {
+            this.talking[0].events.push(
+                { type: 'openChest' }
+            )
         }
     }
 }

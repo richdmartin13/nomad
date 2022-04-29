@@ -201,7 +201,7 @@ class World {
         new KeyPressListener('KeyQ', () => {
 
             this.map.addToEventQueue({
-                type: 'placeItem', item: 'rock'
+                type: 'placeItem', item: this.map.gameObjects['hero'].equippedItems.block.item
             })
         })
 
@@ -275,6 +275,10 @@ class World {
 
         this.map.world = this;
         this.map.mountObjects();
+
+        this.map.startCutscene([
+            { type: "collectItem", who: 'hero', item: 'chest', count: 1}
+        ])
     }
 
     bindMenus() {

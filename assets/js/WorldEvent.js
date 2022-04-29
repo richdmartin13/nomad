@@ -119,7 +119,9 @@ class WorldEvent {
             { type: "message", text: `You found ${this.event.count} ${this.event.item}${this.event.count > 1 ? 's!' : '!'}` }
         ])
 
-        this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
+        if(this.event.pos) {
+            this.map.removeGameObject(this.event.pos.x, this.event.pos.y);
+        }
 
         resolve();
     }

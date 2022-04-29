@@ -175,6 +175,9 @@ class WorldMap {
             case 'rock':
                 source = 'assets/images/world/rocks0.png';
             break;
+            case 'chest':
+                source = 'assets/images/items/chest.png';
+                break;
         }
 
         var posX = pos.x/16;
